@@ -1,0 +1,4 @@
+FROM node:12
+
+WORKDIR /srv/frontend
+CMD npm cache verify && npm install && npm start

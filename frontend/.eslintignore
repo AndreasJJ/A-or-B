@@ -1,0 +1,7 @@
+__mocks__
+node_modules
+jest.config.js
+src/serviceWorker.js
+webpack.development.config.js
+webpack.production.config.js
+public/bundle.js
