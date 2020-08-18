@@ -5,7 +5,7 @@ const config = {
   devtool: 'eval-source-map',
   entry: [
     'webpack-dev-server/client?http://localhost:8081',
-    path.join(__dirname, '/src/index.jsx'),
+    path.join(__dirname, '/src/index.tsx'),
   ],
   output: {
     path: path.join(__dirname, 'public'),
@@ -32,10 +32,14 @@ const config = {
     },
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
     rules: [
+      { 
+        test: /\.tsx?$/, 
+        loader: "awesome-typescript-loader" 
+      },
       {
         test: /\.jsx?/,
         exclude: /node_modules/,

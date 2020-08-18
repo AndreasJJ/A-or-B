@@ -1,9 +1,15 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, RouteProps } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
 
+interface AuthenticatedRouteProps extends RouteProps {
+    authenticatedRoles?: Array<string>;
+    is: React.ReactNode;
+    not: React.ReactNode;
+}
+
 // Route only accessible for authenticated user
-export const AuthenticatedRoute = (props) => {
+export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = (props) => {
     // Getting Keycloak instance
     const { keycloak } = useKeycloak();
 
@@ -17,7 +23,7 @@ export const AuthenticatedRoute = (props) => {
         : true;
 
     // Check whether a component is a function or not. Execute and return if it is a function else only return
-    const isFunction = (component) => {
+    const isFunction = (component: React.ReactNode) => {
         return component instanceof Function ? component() : component;
     };
 

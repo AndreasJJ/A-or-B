@@ -5,7 +5,7 @@ import keycloak from './keycloak';
 import { GlobalStyle } from './global-styles';
 import { Router } from './router/router';
 
-function App() {
+const App: React.FC = () => {
   return (
     <KeycloakProvider keycloak={keycloak}>
       <Router />
