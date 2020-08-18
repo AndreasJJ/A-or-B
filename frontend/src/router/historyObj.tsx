@@ -1,8 +1,4 @@
 import { createBrowserHistory } from 'history';
 
 // The app's history object
-const history = createBrowserHistory();
-
-export {
-  history,
-};
+export const historyObj = createBrowserHistory();

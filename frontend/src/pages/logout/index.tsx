@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 /**
  * Login component that redirects to keycloak for login
  */
-export const Logout = () => {
+export const Logout: React.FC = () => {
     // Getting Keycloak instance
     const { keycloak } = useKeycloak();
 

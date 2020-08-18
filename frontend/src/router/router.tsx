@@ -4,16 +4,16 @@ import { useKeycloak } from '@react-keycloak/web';
 
 import { Loading } from '../sharedComponents/Loading';
 
-import { AuthenticatedRoute } from '../router/AuthenticatedRoute';
+import { AuthenticatedRoute } from './AuthenticatedRoute';
 import { Websocket } from '../pages/websocket';
 import { Login } from '../pages/login';
 import { Registration } from '../pages/registration';
 import { Logout } from '../pages/logout';
 
 // History
-import { history } from './history';
+import { historyObj } from './historyObj';
 
-const RouterComponent = () =>  {
+const RouterComponent: React.FC = () =>  {
   const [, initialized] = useKeycloak();
 
   if (!initialized) {
@@ -21,7 +21,7 @@ const RouterComponent = () =>  {
   }
 
   return (
-    <Router history={history}>
+    <Router history={historyObj}>
       <Switch>
         <Route exact path="/" component={Websocket} />
         <AuthenticatedRoute exact={true} path="/" not={<Redirect to="/login" />} is={<Websocket />} />

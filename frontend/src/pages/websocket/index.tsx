@@ -32,22 +32,25 @@ const Log = styled.div`
   border: 1px solid black;
 `;
 
-const Websocket = () => {
-  let conn = useRef(null);
+const Websocket: React.FC = () => {
+  let conn = useRef<WebSocket | null>(null);
 
   const [inputRef, setInputFocus] = useFocus();
-  const textRef = useRef();
+  const textRef = useRef<HTMLDivElement | null>(null);
 
   const [buttonText, setButtonText] = useState("Connect");
   const [status, setStatus] = useState("Disconnected");
   const [logHtml, setLogHtml] = useState("");
-  const [logScroll, setLogScroll] = useState(null);
+  const [logScroll, setLogScroll] = useState(0);
 
-  const log = (msg) => {
+  const log = (msg: string) => {
     setLogHtml(prev => (prev + msg + '\n'));
     //control.html(control.html() + msg + '<br/>');
-    setLogScroll(textRef.current.scrollTop + 1000)
-    //control.scrollTop(control.scrollTop() + 1000);
+    if (textRef.current) {
+      setLogScroll(textRef.current.scrollTop + 1000)
+      //control.scrollTop(control.scrollTop() + 1000);
+    }
+    
   }
 
   const connect = () => {
@@ -106,14 +109,16 @@ const Websocket = () => {
   }
 
   const onSendClick = () => {
-    var text = inputRef.current.value;
-    log('Sending: ' + text);
-    conn.current.send(text);
-    inputRef.focus;
+    if (conn.current && inputRef.current) {
+      var text = inputRef.current.value;
+      log('Sending: ' + text);
+      conn.current.send(text);
+      setInputFocus;
+    }
     return false;
   }
 
-  const onTextKeyUp = (e) => {
+  const onTextKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       onSendClick();
       return false;

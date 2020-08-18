@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 const config = {
   mode: 'production',
-  entry: path.join(__dirname, '/src/index.jsx'),
+  entry: path.join(__dirname, '/src/index.tsx'),
   output: {
     path: path.join(__dirname, '/public'),
     filename: 'bundle.js',
@@ -27,10 +27,14 @@ const config = {
     minimize: true,
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
     rules: [
+      { 
+        test: /\.tsx?$/, 
+        loader: "awesome-typescript-loader" 
+      },
       {
         test: /\.jsx?/,
         exclude: /node_modules/,

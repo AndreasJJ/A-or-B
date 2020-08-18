@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-const GlobalStyle = createGlobalStyle`
+export const GlobalStyle = createGlobalStyle`
   body {
     min-height: 100vh;
     height: 100vh;
@@ -22,7 +22,3 @@ const GlobalStyle = createGlobalStyle`
     min-height: inherit;
   }
 `;
-
-export {
-  GlobalStyle,
-};
