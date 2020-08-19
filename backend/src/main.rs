@@ -15,6 +15,7 @@ async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<Servi
         .app_data::<Config>()
         .map(|data| data.get_ref().clone())
         .unwrap_or_else(Default::default);
+
     match auth::validate_token(credentials.token()) {
         Ok(res) => {
             if res == true {
@@ -31,18 +32,18 @@ async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<Servi
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=debug");
+    env_logger::init();
 
     // Start http server
     HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(validator);
         App::new()
             .wrap(middleware::Logger::default())
-            .wrap(auth)
             .service(web::resource("/websocket/").to(websocket::index))
             .service(
-                web::scope("/api")
-                    .service(web::resource("/login").route(web::post().to(handlers::login)))
-                    .service(web::resource("/register").route(web::post().to(handlers::register)))
+                web::scope("/auth/")
+                    .wrap(auth)
+                    .service(web::resource("/ticket").route(web::get().to(handlers::ticket)))
             )
     })
     .bind("0.0.0.0:8082")?
