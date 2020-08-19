@@ -12,6 +12,8 @@ actix-web = "2.0.0"
 actix-web-httpauth = { git = "https://github.com/actix/actix-web-httpauth" }
 actix-web-actors = "2.0.0"
 actix-files = "0.2.2"
+diesel = { version = "1.4.2", features = ["postgres","uuid", "r2d2", "chrono"] }
+r2d2 = "0.8.8"
 chrono = { version = "0.4.10", features = ["serde"] }
 derive_more = "0.99.2"
 dotenv = "0.15.0"
@@ -24,3 +26,4 @@ alcoholic_jwt = "1.0.0"
 reqwest = "0.9.22"
 actix-rt = "1.0.0"
 env_logger = "0.7.1"
+uuid = { version = "0.6", features = ["v4", "serde"] }
