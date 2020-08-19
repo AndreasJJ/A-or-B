@@ -1,7 +1,16 @@
+#[macro_use]
+extern crate diesel;
+
+use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager};
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+
 use actix_web::{dev::ServiceRequest, middleware, web, App, Error, HttpServer};
 
 mod auth;
 mod errors;
+mod models;
+mod schema;
 mod api;
 use self::api::handlers;
 use self::api::websocket::websocket;
@@ -34,10 +43,19 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=debug");
     env_logger::init();
 
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+
+     // create db connection pool
+     let manager = ConnectionManager::<PgConnection>::new(database_url);
+     let pool: Pool = r2d2::Pool::builder()
+         .build(manager)
+         .expect("Failed to create pool.");
+
     // Start http server
     HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(validator);
         App::new()
+            .data(pool.clone())
             .wrap(middleware::Logger::default())
             .service(web::resource("/websocket/").to(websocket::index))
             .service(
