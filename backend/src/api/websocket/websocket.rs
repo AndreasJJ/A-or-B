@@ -1,6 +1,7 @@
 use actix::{Actor, StreamHandler};
 use actix_web_actors::ws;
 use actix_web::{web, Error, HttpRequest, HttpResponse};
+use serde::Deserialize;
 
 struct Websocket;
 
@@ -41,7 +42,13 @@ impl Websocket {
   }
 }
 
-pub async fn index(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+#[derive(Deserialize)]
+pub struct Info {
+    ticket: String,
+}
+
+pub async fn index(info: web::Query<Info>, req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+  println!("{}", info.ticket);
   let resp = ws::start(Websocket {}, &req, stream);
   println!("{:?}", resp);
   resp
