@@ -16,7 +16,7 @@ pub async fn ticket(db: web::Data<Pool>, req: HttpRequest, query: web::Query<Has
     let remote_socket = req.peer_addr().unwrap();
     let remote_ip = remote_socket.ip();
 
-    Ok(web::block(move || create_ticket(db, &auth_token, &remote_ip.to_string()))
+    Ok(web::block(move || create_ticket(&db, &auth_token, &remote_ip.to_string()))
         .await
         .map(|ticket| HttpResponse::Created().json(ticket.id))
         .map_err(|_| HttpResponse::InternalServerError())?)

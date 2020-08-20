@@ -9,7 +9,7 @@ struct Websocket;
 
 use super::super::super::Pool;
 use super::handler;
-use super::super::database_utilty::get_ticket;
+use super::super::database_utilty::{get_ticket, invalidate_ticket};
 
 impl Actor for Websocket {
   type Context = ws::WebsocketContext<Self>;
@@ -41,7 +41,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for Websocket {
 }
 
 impl Websocket {
-  fn routeHandler(route: &str) {
+  fn route_handler(route: &str) {
 
   }
 }
@@ -56,8 +56,20 @@ pub async fn index(db: web::Data<Pool>, info: web::Query<Info>, req: HttpRequest
   match ticket_res {
     Ok(ticket_uuid) => {
       // Get the ticket from the provided id
-      let ticket = get_ticket(db, ticket_uuid);
+      let ticket = get_ticket(&db, ticket_uuid);
       let ticket_res = ticket.unwrap();
+      
+      // Check that the ticket isnt used and if it isnt then use ti
+      if ticket_res.used {
+        return Err(Error::from(HttpResponse::BadRequest().json("Invalid ticket")));
+      } else {
+        let res = invalidate_ticket(&db, ticket_uuid);
+        match res {
+          Ok(_) => println!("Ticket successfully invalidated"),
+          Err(_) => return Err(Error::from(HttpResponse::BadRequest().json("Ticket validation failed"))),
+        };
+      }
+
       // Check that the ticket is less than 30s old
       if ticket_res.timestamp.timestamp_millis() + 30000 < Utc::now().timestamp_millis() {
         println!("Token too old, token: {}, now: {}", ticket_res.timestamp.timestamp_millis() + 30000, Utc::now().timestamp_millis());
