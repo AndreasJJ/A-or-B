@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(pool.clone())
             .wrap(middleware::Logger::default())
-            .service(web::resource("/websocket/").to(websocket::index))
+            .service(web::resource("/websocket").to(websocket::index))
             .service(
                 web::scope("/auth/")
                     .wrap(auth)

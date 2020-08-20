@@ -7,6 +7,7 @@ pub struct Ticket {
     pub id: uuid::Uuid,
     pub token: String,
     pub timestamp: chrono::NaiveDateTime,
+    pub ip: String,
     pub used: bool,
 }
 
@@ -15,5 +16,6 @@ pub struct Ticket {
 pub struct NewTicket<'a> {
     pub token: &'a str,
     pub timestamp: chrono::NaiveDateTime,
+    pub ip: &'a str,
     pub used: bool,
 }

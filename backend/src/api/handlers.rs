@@ -16,18 +16,21 @@ pub async fn ticket(db: web::Data<Pool>, req: HttpRequest, query: web::Query<Has
     let auth_header = headers.get("Authorization");
     let auth_header_str: &str = &auth_header.unwrap().to_str().unwrap();
     let auth_token = auth_header_str.replace("Bearer ", "");
+    let remote_socket = req.peer_addr().unwrap();
+    let remote_ip = remote_socket.ip();
 
-    Ok(web::block(move || get_ticket(db, &auth_token))
+    Ok(web::block(move || get_ticket(db, &auth_token, &remote_ip.to_string()))
         .await
         .map(|ticket| HttpResponse::Created().json(ticket.id))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-fn get_ticket(db: web::Data<Pool>, auth_token: &str) -> Result<Ticket, diesel::result::Error> {
+fn get_ticket(db: web::Data<Pool>, auth_token: &str, remote_ip: &str) -> Result<Ticket, diesel::result::Error> {
     let conn = db.get().unwrap();
     let new_ticket = NewTicket {
         token: auth_token,
         timestamp: chrono::Local::now().naive_local(),
+        ip: remote_ip,
         used: false,
     };
     let res = insert_into(tickets).values(&new_ticket).get_result::<Ticket>(&conn)?;
