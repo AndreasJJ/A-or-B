@@ -1,8 +1,8 @@
 {
-  "name": "oslo-kommune-ombruk",
+  "name": "A-or-B",
   "version": "1.0.0",
   "description": "Initial commit",
-  "main": "index.js",
+  "main": "index.tsx",
   "scripts": {
     "lint": "eslint --ignore-path .eslintignore --ext js,jsx .",
     "test": "jest",
@@ -33,7 +33,8 @@
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "styled-components": "^5.0.0",
-    "styled-icons": "^9.2.0"
+    "styled-icons": "^9.2.0",
+    "swr": "^0.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",

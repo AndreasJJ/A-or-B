@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import { useKeycloak } from '@react-keycloak/web';
 
 import { useFocus } from '../../hooks';
 
@@ -33,6 +34,7 @@ const Log = styled.div`
 `;
 
 const Websocket: React.FC = () => {
+  const { keycloak } = useKeycloak();
   let conn = useRef<WebSocket | null>(null);
 
   const [inputRef, setInputFocus] = useFocus();
@@ -53,10 +55,30 @@ const Websocket: React.FC = () => {
     
   }
 
-  const connect = () => {
+  const get_ticket = async () => {
+    const res = await fetch('/api/auth/ticket', {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${keycloak.token}`,
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    });
+
+    const ticket = await res.json();
+    return ticket;
+  };
+
+  const connect = async () => {
+    const ticket = await get_ticket();
+
     disconnect();
 
-    let wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://') + window.location.host + '/api/websocket/';
+    let wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://') + window.location.host + `/api/websocket?ticket=${ticket}`;
 
     conn.current = new WebSocket(wsUri);
 

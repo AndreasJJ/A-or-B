@@ -1,9 +1,52 @@
 use crate::errors::ServiceError;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 use std::error::Error;
 
-pub fn validate_token(token: &str) -> Result<bool, ServiceError> {
+use actix_web::{dev::ServiceRequest, HttpRequest};
+use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
+use actix_web_httpauth::extractors::AuthenticationError;
+
+use super::api::types::User;
+
+pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, actix_web::Error> {
+    let config = req
+        .app_data::<Config>()
+        .map(|data| data.get_ref().clone())
+        .unwrap_or_else(Default::default);
+
+    match validate_token(credentials.token()) {
+        Ok(res) => {
+            if res.0 == true {
+                let new_user = User {
+                    email: res.1
+                };
+
+                let parts = req.into_parts();
+                let http_request = parts.0;
+                let http_payload = parts.1;
+                add_extensions(&http_request, new_user);
+
+                let result = ServiceRequest::from_request(http_request);
+                if let Ok(mut new_request) = result {
+                    new_request.set_payload(http_payload);
+                    Ok(new_request)
+                } else {
+                    Err(AuthenticationError::from(config).into())
+                }
+            } else {
+                Err(AuthenticationError::from(config).into())
+            }
+        }
+        Err(_) => Err(AuthenticationError::from(config).into()),
+    }
+}
+
+pub fn add_extensions(re: &HttpRequest, user: User) {
+    re.extensions_mut().insert(user);
+}
+
+pub fn validate_token(token: &str) -> Result<(bool, String), ServiceError> {
     let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
     let openid = fetch_openid_config(authority.as_str())
         .expect("failed to fetch openid config");
@@ -20,11 +63,13 @@ pub fn validate_token(token: &str) -> Result<bool, ServiceError> {
     };
     let jwk = jwks.find(&kid).expect("Specified key not found in set");
     let res = validate(token, jwk, validations);
-    match &res {
-        Ok(v) => println!("OK"),
-        Err(e) => println!("error: {:?}", e),
+    if let Err(e) = &res {
+        return Err(ServiceError::InternalServerError)
     }
-    Ok(res.is_ok())
+    let ok = res.is_ok();
+    let result = res.unwrap();
+    let email = result.claims.get("email").unwrap();
+    Ok((ok, email.to_string()))
 }
 
 #[derive(Clone, Debug, Deserialize)]

@@ -1,11 +1,14 @@
 #[macro_use]
 extern crate diesel;
+extern crate validator_derive;
+extern crate validator;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-use actix_web::{dev::ServiceRequest, middleware, web, App, Error, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
+use actix_web_httpauth::middleware::HttpAuthentication;
 
 mod auth;
 mod errors;
@@ -14,28 +17,7 @@ mod schema;
 mod api;
 use self::api::handlers;
 use self::api::websocket::websocket;
-
-use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
-use actix_web_httpauth::extractors::AuthenticationError;
-use actix_web_httpauth::middleware::HttpAuthentication;
-
-async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
-    let config = req
-        .app_data::<Config>()
-        .map(|data| data.get_ref().clone())
-        .unwrap_or_else(Default::default);
-
-    match auth::validate_token(credentials.token()) {
-        Ok(res) => {
-            if res == true {
-                Ok(req)
-            } else {
-                Err(AuthenticationError::from(config).into())
-            }
-        }
-        Err(_) => Err(AuthenticationError::from(config).into()),
-    }
-}
+use self::auth::validator;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -54,6 +36,7 @@ async fn main() -> std::io::Result<()> {
     // Start http server
     HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(validator);
+        let auth2 = HttpAuthentication::bearer(validator);
         App::new()
             .data(pool.clone())
             .wrap(middleware::Logger::default())
@@ -62,6 +45,12 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/auth/")
                     .wrap(auth)
                     .service(web::resource("/ticket").route(web::get().to(handlers::ticket)))
+            )
+            .service(
+                web::scope("/game/")
+                    .wrap(auth2)
+                    .service(web::resource("/new").route(web::post().to(handlers::new_game)))
+                    .service(web::resource("/list").route(web::get().to(handlers::get_games)))
             )
     })
     .bind("0.0.0.0:8082")?

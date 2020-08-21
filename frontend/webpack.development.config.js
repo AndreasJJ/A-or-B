@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const config = {
   devtool: 'eval-source-map',
   entry: [
-    'webpack-dev-server/client?http://localhost:8081',
+    'webpack-dev-server/client?http://localhost',
     path.join(__dirname, '/src/index.tsx'),
   ],
   output: {
