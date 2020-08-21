@@ -23,7 +23,7 @@ const Content = styled.div`
   -webkit-box-shadow: 0 0.0625em 0.125em rgba(0,0,0,0.15);
   -moz-box-shadow: 0 0.0625em 0.125em rgba(0,0,0,0.15);
   box-shadow: 0 0.0625em 0.125em rgba(0,0,0,0.15);
-`
+`;
 
 const Log = styled.div`
   white-space: pre-line;
@@ -35,35 +35,28 @@ const Log = styled.div`
 
 const Websocket: React.FC = () => {
   const { keycloak } = useKeycloak();
-  let conn = useRef<WebSocket | null>(null);
+  const conn = useRef<WebSocket | null>(null);
 
   const [inputRef, setInputFocus] = useFocus();
   const textRef = useRef<HTMLDivElement | null>(null);
 
-  const [buttonText, setButtonText] = useState("Connect");
-  const [status, setStatus] = useState("Disconnected");
-  const [logHtml, setLogHtml] = useState("");
-  const [logScroll, setLogScroll] = useState(0);
+  const [buttonText, setButtonText] = useState('Connect');
+  const [status, setStatus] = useState('Disconnected');
+  const [logHtml, setLogHtml] = useState('');
 
   const log = (msg: string) => {
-    setLogHtml(prev => (prev + msg + '\n'));
-    //control.html(control.html() + msg + '<br/>');
-    if (textRef.current) {
-      setLogScroll(textRef.current.scrollTop + 1000)
-      //control.scrollTop(control.scrollTop() + 1000);
-    }
-    
-  }
+    setLogHtml((prev) => (`${prev + msg}\n`));
+  };
 
-  const get_ticket = async () => {
+  const getTicket = async () => {
     const res = await fetch('/api/auth/ticket', {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${keycloak.token}`,
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
@@ -73,12 +66,31 @@ const Websocket: React.FC = () => {
     return ticket;
   };
 
+  const updateUi = () => {
+    if (conn.current == null) {
+      setStatus('Disconnected');
+      setButtonText('Connect');
+    } else {
+      setStatus(`Connected (${conn.current.protocol})`);
+      setButtonText('Disconnect');
+    }
+  };
+
+  const disconnect = () => {
+    if (conn.current != null) {
+      log('Disconnecting...');
+      conn.current.close();
+      conn.current = null;
+      updateUi();
+    }
+  };
+
   const connect = async () => {
-    const ticket = await get_ticket();
+    const ticket = await getTicket();
 
     disconnect();
 
-    let wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://') + window.location.host + `/api/websocket?ticket=${ticket}`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}#${window.location.host}/api/websocket?ticket=${ticket}`;
 
     conn.current = new WebSocket(wsUri);
 
@@ -86,39 +98,19 @@ const Websocket: React.FC = () => {
 
     conn.current.onopen = () => {
       log('Connected.');
-      update_ui();
+      updateUi();
     };
 
     conn.current.onmessage = (e) => {
-      log('Received: ' + e.data);
+      log(`Received: ${e.data}`);
     };
 
     conn.current.onclose = () => {
       log('Disconnected.');
       conn.current = null;
-      update_ui();
+      updateUi();
     };
-  }
-
-  const disconnect = () => {
-    if (conn.current != null) {
-      log('Disconnecting...');
-      conn.current.close();
-      conn.current = null;
-      update_ui();
-    }
-  }
-
-  const update_ui = () => {
-    let msg = '';
-    if (conn.current == null) {
-      setStatus("Disconnected")
-      setButtonText("Connect")
-    } else {
-      setStatus("Connected (" + conn.current.protocol + ")");
-      setButtonText("Disconnect")
-    }
-  }
+  };
 
   const onConnectClick = () => {
     if (conn.current == null) {
@@ -126,40 +118,39 @@ const Websocket: React.FC = () => {
     } else {
       disconnect();
     }
-    update_ui();
+    updateUi();
     return false;
-  }
+  };
 
   const onSendClick = () => {
     if (conn.current && inputRef.current) {
-      var text = inputRef.current.value;
-      log('Sending: ' + text);
+      const text = inputRef.current.value;
+      log(`Sending: ${text}`);
       conn.current.send(text);
-      setInputFocus;
+      setInputFocus();
     }
     return false;
-  }
+  };
 
   const onTextKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       onSendClick();
-      return false;
     }
-  }
+  };
 
   return (
     <Wrapper>
       <Content>
         <h3>Chat!</h3>
         <div>
-          <button onClick={onConnectClick}>{buttonText}</button>
+          <button type="submit" onClick={onConnectClick}>{buttonText}</button>
           &nbsp;|&nbsp;Status:
           <span>{status}</span>
         </div>
         <Log ref={textRef}>
           {logHtml}
         </Log>
-        <form onSubmit={() => {return false;}}>
+        <form onSubmit={() => false}>
           <input onKeyUp={onTextKeyUp} ref={inputRef} type="text" />
           <input onClick={onSendClick} type="button" value="Send" />
         </form>

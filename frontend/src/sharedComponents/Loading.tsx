@@ -69,9 +69,9 @@ interface LoadingProps {
     text?: string;
 }
 
-export const Loading: React.FC<LoadingProps> = (props) => (
-    <Wrapper>
-        <Loader />
-        <LoadingText>{props.text || 'Laster inn...'}</LoadingText>
-    </Wrapper>
+export const Loading: React.FC<LoadingProps> = ({ text }) => (
+  <Wrapper>
+    <Loader />
+    <LoadingText>{text || 'Laster inn...'}</LoadingText>
+  </Wrapper>
 );

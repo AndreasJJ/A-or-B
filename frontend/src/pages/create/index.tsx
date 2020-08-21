@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
@@ -51,12 +51,12 @@ export const Create: React.FC = () => {
     history.push('/create/new');
   };
 
-  const { data, error, isValidating } = useSWR<Array<{
+  const { data } = useSWR<Array<{
     id: string;
     title: string;
     thumbnail: string;
   }>>(['/api/game/list', keycloak.token], fetcher);
-  const games = data || [];
+  const games = data || [];
 
   return (
     <Wrapper>

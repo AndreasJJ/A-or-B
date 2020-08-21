@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -46,15 +46,13 @@ interface GameTileprops {
 }
 
 /**
- * Component for 
+ * Component for
  */
-export const GameTile: React.FC<GameTileprops> = (props) => {
-  return (
-    <Tile to={`/create/${props.id}`}>
-      <Image url={props.thumbnail} />
-      <Description>
-        {props.title}
-      </Description>
-    </Tile>
-  );
-};
+export const GameTile: React.FC<GameTileprops> = ({ id, title, thumbnail }) => (
+  <Tile to={`/create/${id}`}>
+    <Image url={thumbnail} />
+    <Description>
+      {title}
+    </Description>
+  </Tile>
+);

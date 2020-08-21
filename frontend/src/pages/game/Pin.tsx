@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Fade } from './Fade';
@@ -41,9 +41,9 @@ interface PinProps {
 /**
  * Pin component
  */
-export const Pin: React.FC<PinProps> = (props) => {
+export const Pin: React.FC<PinProps> = ({ title }) => {
   const history = useHistory();
-  
+
   const [pin, setPin] = useState('');
 
   const onPinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,16 +58,15 @@ export const Pin: React.FC<PinProps> = (props) => {
       // TODO: Do some check to see if the pin exists
       history.push(`/game/${pin}`);
     }
-  }
+  };
 
   return (
     <Fade>
-        {props.title && typeof props.title == "string" ? <Title>{props.title}</Title> : props.title}
-        <Form onSubmit={onSubmit}>
-          <Input type="tel" placeholder="Pin" value={pin} onChange={onPinChange} />
-          <Button>Join</Button>
-        </Form>
+      {title && typeof title === 'string' ? <Title>{title}</Title> : title}
+      <Form onSubmit={onSubmit}>
+        <Input type="tel" placeholder="Pin" value={pin} onChange={onPinChange} />
+        <Button>Join</Button>
+      </Form>
     </Fade>
   );
 };
-

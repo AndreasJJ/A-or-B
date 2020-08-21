@@ -32,18 +32,16 @@ interface GamesGridProps {
 }
 
 /**
- * Component 
+ * Component
  */
-export const GamesGrid: React.FC<GamesGridProps> = (props) => {
-  return (
-    <>
-      {props.games && props.games.length > 0 ? (
-        <Grid>
-          {props.games.map((game) => <GameTile key={game.id} {...game} />)}
-        </Grid>
-      ) : (
-        <None>No Games...</None>
-      )}
-    </>
-  );
-};
+export const GamesGrid: React.FC<GamesGridProps> = ({ games }) => (
+  <>
+    {games && games.length > 0 ? (
+      <Grid>
+        {games.map((game) => <GameTile key={game.id} {...game} />)}
+      </Grid>
+    ) : (
+      <None>No Games...</None>
+    )}
+  </>
+);

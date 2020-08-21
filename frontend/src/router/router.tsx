@@ -1,5 +1,7 @@
 import React from 'react';
-import { Switch, Route, Router, Redirect } from 'react-router-dom';
+import {
+  Switch, Route, Router, Redirect,
+} from 'react-router-dom';
 import { useKeycloak } from '@react-keycloak/web';
 
 import { Loading } from '../sharedComponents/Loading';
@@ -16,7 +18,7 @@ import { NewGame } from '../pages/create/NewGame';
 // History
 import { historyObj } from './historyObj';
 
-const RouterComponent: React.FC = () =>  {
+const RouterComponent: React.FC = () => {
   const [, initialized] = useKeycloak();
 
   if (!initialized) {
@@ -26,7 +28,7 @@ const RouterComponent: React.FC = () =>  {
   return (
     <Router history={historyObj}>
       <Switch>
-        <AuthenticatedRoute exact={true} path="/" not={<Redirect to="/login" />} is={<Websocket />} />
+        <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
         <Route path="/game/:pin?" component={Game} />
         <Route path="/create/new" component={NewGame} />
         <Route path="/create" component={Create} />

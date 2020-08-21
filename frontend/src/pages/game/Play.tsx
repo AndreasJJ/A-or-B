@@ -17,11 +17,6 @@ interface PlayProps {
 /**
  * Login component that redirects to keycloak for login
  */
-export const Play: React.FC<PlayProps> = (props) => {
-
-  return (
-    <Wrapper>
-        
-    </Wrapper>
-  );
-};
+export const Play: React.FC<PlayProps> = () => (
+  <Wrapper />
+);
