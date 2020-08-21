@@ -27,3 +27,5 @@ reqwest = "0.9.22"
 actix-rt = "1.0.0"
 env_logger = "0.7.1"
 uuid = { version = "0.6", features = ["v4", "serde"] }
+validator = "0.10"
+validator_derive = "0.10"
