@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useKeycloak } from '@react-keycloak/web';
 
-
 const Wrapper = styled.div`
     display: flex;
     justify-content: center;
@@ -16,14 +15,14 @@ const Wrapper = styled.div`
  * Login component that redirects to keycloak for login
  */
 export const Logout: React.FC = () => {
-    // Getting Keycloak instance
-    const { keycloak } = useKeycloak();
+  // Getting Keycloak instance
+  const { keycloak } = useKeycloak();
 
-    useEffect(() => {
-        keycloak.logout();
-    });
+  useEffect(() => {
+    keycloak.logout();
+  });
 
-    return (
-      <Wrapper>Logger deg ut...</Wrapper>
-    );
+  return (
+    <Wrapper>Logger deg ut...</Wrapper>
+  );
 };

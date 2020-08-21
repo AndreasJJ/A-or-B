@@ -15,14 +15,14 @@ const Wrapper = styled.div`
  * Login component that redirects to keycloak for login
  */
 export const Registration: React.FC = () => {
-    // Getting Keycloak instance
-    const { keycloak } = useKeycloak();
+  // Getting Keycloak instance
+  const { keycloak } = useKeycloak();
 
-    useEffect(() => {
-        keycloak.register();
-    });
+  useEffect(() => {
+    keycloak.register();
+  });
 
-    return (
-      <Wrapper>Sender deg til registrering...</Wrapper>
-    );
+  return (
+    <Wrapper>Sender deg til registrering...</Wrapper>
+  );
 };

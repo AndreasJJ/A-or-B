@@ -25,24 +25,23 @@ interface PinProps {
 /**
  * Pin component
  */
-export const Fade: React.FC<PinProps> = (props) => {
+export const Fade: React.FC<PinProps> = ({ children }) => {
   const colors = ['#F7F6CF', '#B6D8F2', '#F4CFDF', '#5784BA', '#9AC8EB'];
   const [color, setColor] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => { 
-      setColor((prev) => (prev < (colors.length - 1) ? prev+1 : 0));
+    const interval = setInterval(() => {
+      setColor((prev) => (prev < (colors.length - 1) ? prev + 1 : 0));
     }, 3000);
 
     return () => {
       clearInterval(interval);
-    }
+    };
   }, []);
 
   return (
     <Wrapper color={colors[color]}>
-        {props.children}
+      {children}
     </Wrapper>
   );
 };
-

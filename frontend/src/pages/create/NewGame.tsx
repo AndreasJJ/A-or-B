@@ -50,34 +50,37 @@ const Content = styled.div`
 export const NewGame: React.FC = () => {
   const { keycloak } = useKeycloak();
 
-  const [title, setTitle] = useState("");
-  const [leftText, setLeftText] = useState("");
-  const [rightText, setRightText] = useState("");
+  const [title, setTitle] = useState('');
+  const [leftText, setLeftText] = useState('');
+  const [rightText, setRightText] = useState('');
   const [rounds, setRounds] = useState<Array<{title: string; link: string;}>>([]);
 
   const newRound = () => {
-    setRounds((prev) => [...prev, {title: "", link: ""}]);
+    setRounds((prev) => [...prev, { title: '', link: '' }]);
   };
 
   const onRoundChange = (index: number, round: {title: string; link: string;}) => {
-    setRounds((prev) => [...prev.slice(0, index), round , ...prev.slice(index + 1)]);
+    setRounds((prev) => [...prev.slice(0, index), round, ...prev.slice(index + 1)]);
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.persist();
-    const value = e.currentTarget.value;
-    const name = e.currentTarget.name;
-    switch(name) {
-      case "title": {
+    const { value } = e.currentTarget;
+    const { name } = e.currentTarget;
+    switch (name) {
+      case 'title': {
         setTitle(value);
         break;
       }
-      case "left_text": {
+      case 'left_text': {
         setLeftText(value);
         break;
       }
-      case "right_text": {
+      case 'right_text': {
         setRightText(value);
+        break;
+      }
+      default: {
         break;
       }
     }
@@ -89,14 +92,14 @@ export const NewGame: React.FC = () => {
 
   const submitGame = () => {
     const data = {
-      title: title,
+      title,
       left_text: leftText,
       right_text: rightText,
-      rounds: rounds,
+      rounds,
     };
 
     PostToApi('/api/game/new', data, keycloak.token);
-  }
+  };
 
   return (
     <Wrapper>
@@ -115,4 +118,3 @@ export const NewGame: React.FC = () => {
     </Wrapper>
   );
 };
-

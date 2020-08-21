@@ -40,25 +40,25 @@ interface JoinProps {
 /**
  * Login component that redirects to keycloak for login
  */
-export const Join: React.FC<JoinProps> = (props) => {
-  const [name, setName] = useState("");
+export const Join: React.FC<JoinProps> = ({ title }) => {
+  const [name, setName] = useState('');
 
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.persist();
     setName(e.currentTarget.value);
-  }
+  };
 
   const onSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-  }
+  };
 
   return (
     <Fade>
-        {props.title && typeof props.title == "string" ? <Title>{props.title}</Title> : props.title}
-        <Form onSubmit={onSubmit}>
-          <Input type="text" placeholder="Name" value={name} onChange={onNameChange} />
-          <Button>Go!</Button>
-        </Form>
+      {title && typeof title === 'string' ? <Title>{title}</Title> : title}
+      <Form onSubmit={onSubmit}>
+        <Input type="text" placeholder="Name" value={name} onChange={onNameChange} />
+        <Button>Go!</Button>
+      </Form>
     </Fade>
   );
 };

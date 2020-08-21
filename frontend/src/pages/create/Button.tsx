@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 interface WrapperProps {
-  type?: "info" | "success" | "error";
+  type?: 'info' | 'success' | 'error';
   styling?: string;
 }
 
 const Wrapper = styled.div<WrapperProps>`
     position: relative;
     background-color: ${(props) => {
-      switch(props.type) {
-        case "info": {
-          return "#1368CE";
-        }
-        case "success": {
-          return "#26890C";
-        }
-        case "error": {
-          return "#E21B3C";
-        }
-        default: {
-          return "#26890C";
-        }
+    switch (props.type) {
+      case 'info': {
+        return '#1368CE';
       }
-    }};
+      case 'success': {
+        return '#26890C';
+      }
+      case 'error': {
+        return '#E21B3C';
+      }
+      default: {
+        return '#26890C';
+      }
+    }
+  }};
     padding: .5rem 1rem;
     border-radius: .25rem;
     color: #ffffff;
@@ -73,7 +73,7 @@ const Wrapper = styled.div<WrapperProps>`
 
 interface ButtonProps {
   text: string;
-  type?: "info" | "success" | "error";
+  type?: 'info' | 'success' | 'error';
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   styling?: string;
 }
@@ -81,10 +81,10 @@ interface ButtonProps {
 /**
  * Button
  */
-export const Button: React.FC<ButtonProps> = (props) => {
-  return (
-    <Wrapper onClick={props.onClick} type={props.type} styling={props.styling}>
-        {props.text}
-    </Wrapper>
-  );
-};
+export const Button: React.FC<ButtonProps> = ({
+  text, type, onClick, styling,
+}) => (
+  <Wrapper onClick={onClick} type={type} styling={styling}>
+    {text}
+  </Wrapper>
+);

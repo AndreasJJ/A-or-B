@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
 import { Pin } from './Pin';
-import { Play } from './Play';
+import { Play } from './Play';
 import { Join } from './Join';
 
 const Wrapper = styled.div`
@@ -25,7 +25,7 @@ export const Game: React.FC = () => {
   return (
     <Wrapper>
       {
-        (!pin && <Pin title="Trap or Fap" />) || (pin && !name && <Join title="Trap or Fap" />) || (name && <Play pin={pin} />)
+        (!pin && <Pin title="Trap or Fap" />) || (pin && !name && <Join title="Trap or Fap" />) || (name && <Play pin={pin} />)
       }
     </Wrapper>
   );

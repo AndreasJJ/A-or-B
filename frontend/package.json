@@ -4,7 +4,8 @@
   "description": "Initial commit",
   "main": "index.tsx",
   "scripts": {
-    "lint": "eslint --ignore-path .eslintignore --ext js,jsx .",
+    "lint": "eslint --ignore-path .eslintignore --ext js,jsx,ts,tsx .",
+    "fix": "eslint --ignore-path .eslintignore --ext js,jsx,ts,tsx . --fix",
     "test": "jest",
     "validate": "yarn lint && yarn test",
     "build": "webpack -p --progress --config ./webpack.production.config.js",
@@ -47,6 +48,8 @@
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.0.0",
     "@types/react-router-dom": "^5.1.5",
+    "@typescript-eslint/eslint-plugin": "^3.9.1",
+    "@typescript-eslint/parser": "^3.9.1",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
