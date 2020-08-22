@@ -51,6 +51,7 @@ async fn main() -> std::io::Result<()> {
                     .wrap(auth2)
                     .service(web::resource("/new").route(web::post().to(handlers::new_game)))
                     .service(web::resource("/list").route(web::get().to(handlers::get_games)))
+                    .service(web::resource("/{id}").route(web::get().to(handlers::get_game)))
             )
     })
     .bind("0.0.0.0:8082")?

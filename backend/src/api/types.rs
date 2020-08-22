@@ -4,7 +4,7 @@ use validator_derive::*;
 use url::{Url};
 use regex::Regex;
 
-#[derive(Validate, Serialize, Deserialize)]
+#[derive(Validate, Serialize, Deserialize, Queryable)]
 pub struct RoundType {
     #[validate(length(min = 1))]
     pub title: String,
@@ -47,7 +47,7 @@ fn validate_link(link: &str) -> Result<(), ValidationError> {
     Ok(())
 }
 
-#[derive(Validate, Deserialize)]
+#[derive(Validate, Serialize, Deserialize)]
 pub struct GameData {
     #[validate(length(min = 1))]
     pub title: String,

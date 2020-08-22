@@ -1,16 +1,18 @@
 use actix_web::{web};
 use super::super::models::{NewTicket, Ticket, Game, NewGame, Round, NewRound};
 use super::super::schema::tickets::dsl::{tickets, used};
-use super::super::schema::games::dsl::{games, id, owner, title};
-use super::super::schema::rounds::dsl::{rounds, game_id, link};
+use super::super::schema::games::dsl::{games, id, owner, title as game_title};
+use super::super::schema::rounds::dsl::{rounds, game_id, link, title as round_title};
 use super::super::Pool;
-use super::types::{GameData, PublicGame};
+use super::types::{GameData, PublicGame, RoundType};
 use diesel::dsl::{insert_into, update};
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::diesel::ExpressionMethods;
 use crate::diesel::Connection;
 use crate::diesel::JoinOnDsl;
+use crate::diesel::BelongingToDsl;
+use crate::diesel::GroupedBy;
 use uuid;
 
 pub fn create_ticket(db: &web::Data<Pool>, auth_token: &str, remote_ip: &str) -> Result<Ticket, diesel::result::Error> {
@@ -67,7 +69,25 @@ pub fn get_my_games(db: &web::Data<Pool>, email: &str) -> Result<Vec<PublicGame>
   let filter = games.filter(owner.eq(email));
   let joined = filter.inner_join(rounds.on(id.eq(game_id)));
   let distinct = joined.distinct_on(id);
-  let selected = distinct.select((id, title, link));
+  let selected = distinct.select((id, game_title, link));
   let res = selected.load::<PublicGame>(&conn)?;
+  Ok(res)
+}
+
+pub fn get_my_game(db: &web::Data<Pool>, email: &str, specified_id: &uuid::Uuid) -> Result<GameData, diesel::result::Error> {
+  let conn = db.get().unwrap();
+  let filter1 = games.filter(owner.eq(email));
+  let filter2 = filter1.filter(id.eq(specified_id));
+  let my_game = filter2.first::<Game>(&conn)?;
+  
+  let my_game_rounds = Round::belonging_to(&my_game).select((round_title, link)).load::<RoundType>(&conn)?;
+
+  let res = GameData {
+    title: my_game.title,
+    rounds: my_game_rounds,
+    left_text: my_game.left_text,
+    right_text: my_game.right_text,
+  };
+
   Ok(res)
 }
