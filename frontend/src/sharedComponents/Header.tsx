@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
             </LogoWrapper>
             <Nav>
             <NavElement to="/game">
-                <Button type="info" text="Join Games" />
+                <Button type="info" text="Join Game" />
               </NavElement>
               <NavElement to="/create">
                 <Button type="info" text="My Games" />
