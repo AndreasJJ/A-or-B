@@ -32,7 +32,7 @@ const RouterComponent: React.FC = () => {
       <Template>
         <Switch>
           <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
-          <Route path="/game/:pin?" component={Game} />
+          <Route path="/game/:code?" component={Game} />
           <AuthenticatedRoute exact={true} path="/create" not={<Redirect to="/" />} is={<Create />} />
           <AuthenticatedRoute exact={true} path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
           <AuthenticatedRoute path="/create/:id?" not={<Redirect to="/" />} is={<StartGame />} />

@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 interface PlayProps {
-  pin: string;
+  code: string;
 }
 
 /**
