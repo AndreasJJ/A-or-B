@@ -14,6 +14,7 @@ import { Logout } from '../pages/logout';
 import { Game } from '../pages/game';
 import { Create } from '../pages/create';
 import { NewGame } from '../pages/create/NewGame';
+import { StartGame } from '../pages/create/StartGame';
 
 // History
 import { historyObj } from './historyObj';
@@ -30,8 +31,9 @@ const RouterComponent: React.FC = () => {
       <Switch>
         <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
         <Route path="/game/:pin?" component={Game} />
-        <AuthenticatedRoute path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
-        <AuthenticatedRoute path="/create" not={<Redirect to="/" />} is={<Create />} />
+        <AuthenticatedRoute exact={true} path="/create" not={<Redirect to="/" />} is={<Create />} />
+        <AuthenticatedRoute exact={true} path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
+        <AuthenticatedRoute path="/create/:id?" not={<Redirect to="/" />} is={<StartGame />} />
         <AuthenticatedRoute path="/login" not={<Login />} is={<Redirect to="/" />} />
         <AuthenticatedRoute path="/register" not={<Registration />} is={<Redirect to="/" />} />
         <AuthenticatedRoute path="/logout" not={<Redirect to="/" />} is={<Logout />} />
