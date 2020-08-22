@@ -10,6 +10,7 @@ const Tile = styled(Link)`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background-color: #ffffff;
 
   &:hover {
     border: 2px solid #B6D8F2;

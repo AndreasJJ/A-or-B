@@ -30,6 +30,8 @@ const Header = styled.div`
   align-items: center;
   width: 80%;
   margin-bottom: 20px;
+  background-color: white;
+  padding: 15px;
 `;
 
 const H2 = styled.h2`
@@ -38,7 +40,7 @@ const H2 = styled.h2`
 
 const Content = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   height: 100%;
   width: 80%;

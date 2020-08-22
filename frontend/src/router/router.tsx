@@ -5,6 +5,7 @@ import {
 import { useKeycloak } from '@react-keycloak/web';
 
 import { Loading } from '../sharedComponents/Loading';
+import { Template } from '../sharedComponents/Template';
 
 import { AuthenticatedRoute } from './AuthenticatedRoute';
 import { Websocket } from '../pages/websocket';
@@ -28,16 +29,18 @@ const RouterComponent: React.FC = () => {
 
   return (
     <Router history={historyObj}>
-      <Switch>
-        <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
-        <Route path="/game/:pin?" component={Game} />
-        <AuthenticatedRoute exact={true} path="/create" not={<Redirect to="/" />} is={<Create />} />
-        <AuthenticatedRoute exact={true} path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
-        <AuthenticatedRoute path="/create/:id?" not={<Redirect to="/" />} is={<StartGame />} />
-        <AuthenticatedRoute path="/login" not={<Login />} is={<Redirect to="/" />} />
-        <AuthenticatedRoute path="/register" not={<Registration />} is={<Redirect to="/" />} />
-        <AuthenticatedRoute path="/logout" not={<Redirect to="/" />} is={<Logout />} />
-      </Switch>
+      <Template>
+        <Switch>
+          <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
+          <Route path="/game/:pin?" component={Game} />
+          <AuthenticatedRoute exact={true} path="/create" not={<Redirect to="/" />} is={<Create />} />
+          <AuthenticatedRoute exact={true} path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
+          <AuthenticatedRoute path="/create/:id?" not={<Redirect to="/" />} is={<StartGame />} />
+          <AuthenticatedRoute path="/login" not={<Login />} is={<Redirect to="/" />} />
+          <AuthenticatedRoute path="/register" not={<Registration />} is={<Redirect to="/" />} />
+          <AuthenticatedRoute path="/logout" not={<Redirect to="/" />} is={<Logout />} />
+        </Switch>
+      </Template>
     </Router>
   );
 };

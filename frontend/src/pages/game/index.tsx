@@ -25,7 +25,7 @@ export const Game: React.FC = () => {
   return (
     <Wrapper>
       {
-        (!pin && <Pin title="Trap or Fap" />) || (pin && !name && <Join title="Trap or Fap" />) || (name && <Play pin={pin} />)
+        (!pin && <Pin title="A or B" />) || (pin && !name && <Join title="A or B" />) || (name && <Play pin={pin} />)
       }
     </Wrapper>
   );
