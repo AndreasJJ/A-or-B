@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface WrapperProps {
+const Wrapper = styled.div`
+  z-index: 0;
+  position: relative;
+`;
+
+interface InnerProps {
   type?: 'info' | 'success' | 'error';
   styling?: string;
 }
 
-const Wrapper = styled.div<WrapperProps>`
+const Inner = styled.div<InnerProps>`
     position: relative;
     background-color: ${(props) => {
     switch (props.type) {
@@ -84,7 +89,9 @@ interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({
   text, type, onClick, styling,
 }) => (
-  <Wrapper onClick={onClick} type={type} styling={styling}>
-    {text}
+  <Wrapper>
+    <Inner onClick={onClick} type={type} styling={styling}>
+      {text}
+    </Inner>
   </Wrapper>
 );

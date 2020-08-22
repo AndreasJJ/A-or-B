@@ -7,6 +7,8 @@ import {RoundGalleryImage } from './RoundGalleryImage';
 const Gallery = styled.div`
   font-size: 1em;
   font-weight: bold;
+  background-color: white;
+  padding: 45px;
 `;
 
 const Navigation = styled.div`
