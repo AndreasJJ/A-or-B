@@ -48,11 +48,24 @@ interface GameTileprops {
 /**
  * Component for
  */
-export const GameTile: React.FC<GameTileprops> = ({ id, title, thumbnail }) => (
-  <Tile to={`/create/${id}`}>
-    <Image url={thumbnail} />
-    <Description>
-      {title}
-    </Description>
-  </Tile>
-);
+export const GameTile: React.FC<GameTileprops> = ({ id, title, thumbnail }) => {
+  let thumb = thumbnail;
+  try {
+    const url = new URL(thumbnail);
+    const re = /^((www\.)?youtube\.com|youtu\.be)$/; 
+    if (url.host.match(re)) {
+      const video_id = url.searchParams.get('v');
+      thumb = `https://img.youtube.com/vi/${video_id}/sddefault.jpg`;
+    }
+  } catch {
+    
+  }
+  return (
+    <Tile to={`/create/${id}`}>
+      <Image url={thumb} />
+      <Description>
+        {title}
+      </Description>
+    </Tile>
+  );
+};

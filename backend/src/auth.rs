@@ -15,7 +15,7 @@ pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<S
         .map(|data| data.get_ref().clone())
         .unwrap_or_else(Default::default);
 
-    match validate_token(credentials.token()) {
+    match validate_token(credentials.token()).await {
         Ok(res) => {
             if res.0 == true {
                 let new_user = User {
@@ -46,15 +46,15 @@ pub fn add_extensions(re: &HttpRequest, user: User) {
     re.extensions_mut().insert(user);
 }
 
-pub fn validate_token(token: &str) -> Result<(bool, String), ServiceError> {
+pub async fn validate_token(token: &str) -> Result<(bool, String), ServiceError> {
     let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
-    let openid = fetch_openid_config(authority.as_str())
+    let openid = fetch_openid_config(authority.as_str()).await
         .expect("failed to fetch openid config");
     let jwks_uri = openid.jwks_uri;
     // TODO: Solve the problem of the issuer url being keycloak:8080.... temp solution is env. variable
     // let issuer = openid.issuer;
     let issuer = std::env::var("ISSUER").expect("ISSUER must be set");
-    let jwks = fetch_jwks(&format!("{}", jwks_uri))
+    let jwks = fetch_jwks(&format!("{}", jwks_uri)).await
         .expect("failed to fetch jwks");
     let validations = vec![Validation::Issuer(issuer), Validation::SubjectPresent];
     let kid = match token_kid(&token) {
@@ -105,14 +105,14 @@ struct OpenidConfig {
     userinfo_signing_alg_values_supported: Vec<String>,
 }
 
-fn fetch_openid_config(uri: &str) -> Result<OpenidConfig, Box<dyn Error>> {
-    let mut res = reqwest::get(uri)?;
-    let val = res.json::<OpenidConfig>()?;
+async fn fetch_openid_config(uri: &str) -> Result<OpenidConfig, Box<dyn Error>> {
+    let mut res = reqwest::get(uri).await?;
+    let val = res.json::<OpenidConfig>().await?;
     return Ok(val);
 }
 
-fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn Error>> {
-    let mut res = reqwest::get(uri)?;
-    let val = res.json::<JWKS>()?;
+async fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn Error>> {
+    let mut res = reqwest::get(uri).await?;
+    let val = res.json::<JWKS>().await?;
     return Ok(val);
 }
