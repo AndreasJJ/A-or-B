@@ -3,9 +3,20 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Fade } from './Fade';
 
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 40px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px 0px;
+`;
+
 const Title = styled.h1`
   font-size: 1em;
   margin-bottom: 0.4em;
+  margin-top: 0;
 `;
 
 const Form = styled.form`
@@ -34,39 +45,41 @@ const Button = styled.button`
   background-color: #212121;
 `;
 
-interface PinProps {
+interface CodeProps {
   title?: string | React.ReactNode;
 }
 
 /**
- * Pin component
+ * Code component
  */
-export const Pin: React.FC<PinProps> = ({ title }) => {
+export const Code: React.FC<CodeProps> = ({ title }) => {
   const history = useHistory();
 
-  const [pin, setPin] = useState('');
+  const [code, setCode] = useState('');
 
-  const onPinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.persist();
-    setPin(e.currentTarget.value);
+    setCode(e.currentTarget.value);
   };
 
   const onSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    if (pin) {
-      // TODO: Do some check to see if the pin exists
-      history.push(`/game/${pin}`);
+    if (code) {
+      // TODO: Do some check to see if the code exists
+      history.push(`/game/${code}`);
     }
   };
 
   return (
     <Fade>
-      {title && typeof title === 'string' ? <Title>{title}</Title> : title}
-      <Form onSubmit={onSubmit}>
-        <Input type="tel" placeholder="Pin" value={pin} onChange={onPinChange} />
-        <Button>Join</Button>
-      </Form>
+      <Box>
+        {title && typeof title === 'string' ? <Title>{title}</Title> : title}
+        <Form onSubmit={onSubmit}>
+          <Input type="tel" placeholder="Code" value={code} onChange={onCodeChange} />
+          <Button>Join</Button>
+        </Form>
+      </Box>
     </Fade>
   );
 };
