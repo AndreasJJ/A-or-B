@@ -30,8 +30,8 @@ const RouterComponent: React.FC = () => {
       <Switch>
         <AuthenticatedRoute exact path="/" not={<Redirect to="/login" />} is={<Websocket />} />
         <Route path="/game/:pin?" component={Game} />
-        <Route path="/create/new" component={NewGame} />
-        <Route path="/create" component={Create} />
+        <AuthenticatedRoute path="/create/new" not={<Redirect to="/" />} is={<NewGame />} />
+        <AuthenticatedRoute path="/create" not={<Redirect to="/" />} is={<Create />} />
         <AuthenticatedRoute path="/login" not={<Login />} is={<Redirect to="/" />} />
         <AuthenticatedRoute path="/register" not={<Registration />} is={<Redirect to="/" />} />
         <AuthenticatedRoute path="/logout" not={<Redirect to="/" />} is={<Logout />} />
