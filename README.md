@@ -11,7 +11,7 @@ Technology used:
 * Auth: Keycloak
 * Devops: Nginx, Docker, Terraform
 
-## Environment Variables
+## Environment Secrets
 * PROD_AWS_ACCESS_KEY_ID = You can use the keys generated at the beginning, or generate new keys with policy that allows access only to that specific bucket.
 * PROD_AWS_SECRET_ACCESS_KEY = Same as above..
 * AWS_CLOUDFRONT_DISTRIBUTION_ID = You can get this value in AWS Console > CloudFront.
