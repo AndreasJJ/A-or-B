@@ -1,7 +1,7 @@
 {
   "name": "A-or-B",
   "version": "1.0.0",
-  "description": "Initial commit",
+  "description": "A simple game where you create a game with a title, and two buttons A or B that you can name whatever you want (f.ex. True and False) and then you can create a variable amount of rounds which are images/videos that are either A or B.",
   "main": "index.tsx",
   "scripts": {
     "lint": "eslint --ignore-path .eslintignore --ext js,jsx,ts,tsx .",
