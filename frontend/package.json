@@ -61,6 +61,7 @@
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.0",
+    "jest": "^26.4.2",
     "ts-jest": "^26.3.0",
     "typescript": "^3.9.7",
     "url-loader": "^3.0.0",
