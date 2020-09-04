@@ -37,11 +37,12 @@ jobs:
         run: |
           cd frontend
           npm install
-          npm build
+          npm run-script build
       - uses: actions/upload-artifact@master
         with:
           name: build-files
           path: /public/
+          if-no-files-found: error
 
   deploy:
     needs: [install-and-test, build]
