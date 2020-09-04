@@ -22,10 +22,8 @@ interface RoundGalleryImageProps {
 /**
  * Component for
  */
-export const RoundGalleryImage: React.FC<RoundGalleryImageProps> = ({ title, link }) => {
-  return (
-    <Image>
-      <Img src={link} />
-    </Image>
-  );
-};
+export const RoundGalleryImage: React.FC<RoundGalleryImageProps> = ({ link }) => (
+  <Image>
+    <Img src={link} />
+  </Image>
+);

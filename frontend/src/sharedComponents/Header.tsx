@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { Button } from '../pages/create/Button';
+import { Button } from '../pages/create/Button';
 
 const StyledHeader = styled.header`
     width: 100%;
@@ -45,23 +45,21 @@ const NavElement = styled(Link)`
 /**
  * Header component for the Dashboard
  */
-export const Header: React.FC = () => {
-    return (
-        <StyledHeader>
-            <LogoWrapper to="/">
-                <Logo>A or B</Logo>
-            </LogoWrapper>
-            <Nav>
-            <NavElement to="/game">
-                <Button type="info" text="Join Game" />
-              </NavElement>
-              <NavElement to="/create">
-                <Button type="info" text="My Games" />
-              </NavElement>
-              <NavElement to="/create/new">
-                <Button type="success" text="Create Game" />
-              </NavElement>
-            </Nav>
-        </StyledHeader>
-    );
-};
+export const Header: React.FC = () => (
+  <StyledHeader>
+    <LogoWrapper to="/">
+      <Logo>A or B</Logo>
+    </LogoWrapper>
+    <Nav>
+      <NavElement to="/game">
+        <Button type="info" text="Join Game" />
+      </NavElement>
+      <NavElement to="/create">
+        <Button type="info" text="My Games" />
+      </NavElement>
+      <NavElement to="/create/new">
+        <Button type="success" text="Create Game" />
+      </NavElement>
+    </Nav>
+  </StyledHeader>
+);

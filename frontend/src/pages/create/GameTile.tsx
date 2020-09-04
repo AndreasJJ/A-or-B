@@ -53,13 +53,13 @@ export const GameTile: React.FC<GameTileprops> = ({ id, title, thumbnail }) => {
   let thumb = thumbnail;
   try {
     const url = new URL(thumbnail);
-    const re = /^((www\.)?youtube\.com|youtu\.be)$/; 
+    const re = /^((www\.)?youtube\.com|youtu\.be)$/;
     if (url.host.match(re)) {
-      const video_id = url.searchParams.get('v');
-      thumb = `https://img.youtube.com/vi/${video_id}/sddefault.jpg`;
+      const videoId = url.searchParams.get('v');
+      thumb = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
     }
   } catch {
-    
+    // Do some error handling
   }
   return (
     <Tile to={`/create/${id}`}>

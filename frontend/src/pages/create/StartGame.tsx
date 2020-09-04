@@ -73,9 +73,9 @@ export const StartGame: React.FC = () => {
         <Button text="Create Game Session!" type="info" />
       </Header>
       <Content>
-        <Button text={game.left_text || ""} type="success" />
+        <Button text={game.left_text || ''} type="success" />
         <RoundGallery rounds={game.rounds} />
-        <Button text={game.right_text || ""} type="error" />
+        <Button text={game.right_text || ''} type="error" />
       </Content>
     </Wrapper>
   );

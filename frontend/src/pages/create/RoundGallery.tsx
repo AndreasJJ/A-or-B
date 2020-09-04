@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { RoundGalleryVideo } from './RoundGalleryVideo';
-import {RoundGalleryImage } from './RoundGalleryImage';
+import { RoundGalleryVideo } from './RoundGalleryVideo';
+import { RoundGalleryImage } from './RoundGalleryImage';
 
 const Gallery = styled.div`
   font-size: 1em;
@@ -53,23 +53,23 @@ export const RoundGallery: React.FC<RoundGalleryProps> = ({ rounds }) => {
 
   const next = () => {
     if (selectedRound + 1 < rounds.length) {
-      setSelectedRound((prev) => prev+1);
+      setSelectedRound((prev) => prev + 1);
     }
   };
 
   const previous = () => {
     if (selectedRound - 1 >= 0) {
-      setSelectedRound((prev) => prev-1);
+      setSelectedRound((prev) => prev - 1);
     }
-  }
+  };
 
   const first = () => {
     setSelectedRound(0);
-  }
+  };
 
   const last = () => {
-    setSelectedRound(rounds.length-1);
-  }
+    setSelectedRound(rounds.length - 1);
+  };
 
   const url = new URL(rounds[selectedRound].link);
   const re = /^((www\.)?youtube\.com|youtu\.be)$/;
@@ -87,9 +87,10 @@ export const RoundGallery: React.FC<RoundGalleryProps> = ({ rounds }) => {
         <NavNumbers>
           <NavNumber selected={selectedRound === 0}>1</NavNumber>
           ...
-          {(selectedRound !== 0 && selectedRound !== rounds.length-1) && (<NavNumber selected={true}>{selectedRound+1}</NavNumber>)}
-          {(selectedRound !== 0 && selectedRound !== rounds.length-1) && '...'}
-          <NavNumber selected={selectedRound === rounds.length-1}>{rounds.length}</NavNumber>
+          {(selectedRound !== 0 && selectedRound !== rounds.length - 1)
+          && (<NavNumber selected>{selectedRound + 1}</NavNumber>)}
+          {(selectedRound !== 0 && selectedRound !== rounds.length - 1) && '...'}
+          <NavNumber selected={selectedRound === rounds.length - 1}>{rounds.length}</NavNumber>
         </NavNumbers>
         <NavButton onClick={next}>›</NavButton>
         <NavButton onClick={last}>»</NavButton>

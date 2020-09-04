@@ -29,13 +29,11 @@ interface DashboardProps {
  * Component that wraps around the page components.
  * It's the general portal wrapper, with navigation and such.
  */
-export const Template: React.FC<DashboardProps> = (props) => {
-    return (
-        <Wrapper>
-            <Header />
-            <Body>
-                <Page>{props.children}</Page>
-            </Body>
-        </Wrapper>
-    );
-};
+export const Template: React.FC<DashboardProps> = ({ children }) => (
+  <Wrapper>
+    <Header />
+    <Body>
+      <Page>{children}</Page>
+    </Body>
+  </Wrapper>
+);

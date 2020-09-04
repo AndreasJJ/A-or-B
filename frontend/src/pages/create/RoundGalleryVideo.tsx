@@ -13,22 +13,22 @@ interface RoundGalleryVideoProps {
 /**
  * Component for
  */
-export const RoundGalleryVideo: React.FC<RoundGalleryVideoProps> = ({ title, link }) => {
-  let url = new URL(link);
-  let id = url.searchParams.get("v");
-  let newUrl = `https://www.youtube.com/embed/${id}`;
+export const RoundGalleryVideo: React.FC<RoundGalleryVideoProps> = ({ link }) => {
+  const url = new URL(link);
+  const id = url.searchParams.get('v');
+  const newUrl = `https://www.youtube.com/embed/${id}`;
 
   return (
     <Video>
       <iframe
+        title="youtube video"
         width="560"
         height="315"
         src={newUrl}
         frameBorder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
-      >
-      </iframe>
+      />
     </Video>
   );
 };
