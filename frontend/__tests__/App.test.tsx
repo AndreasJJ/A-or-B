@@ -10,6 +10,6 @@ test('renders Hello World!', () => {
   );
 
   // hello world should be rendered
-  const text = getByText('Hello World!');
+  const text = getByText('Laster inn...');
   expect(text).toBeInTheDocument();
 });

@@ -37,7 +37,8 @@ const config = {
   module: {
     rules: [
       { 
-        test: /\.tsx?$/, 
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
         loader: "awesome-typescript-loader" 
       },
       {
