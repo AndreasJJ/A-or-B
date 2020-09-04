@@ -41,7 +41,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: build-files
-          path: /frontend/public/
+          path: ${{ github.workspace }}/frontend/public/
 
   deploy:
     needs: [install-and-test, build]
@@ -56,4 +56,4 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: build-files
-          path: /frontend/public/
+          path: ${{ github.workspace }}/frontend/public/
