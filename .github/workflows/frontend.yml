@@ -41,9 +41,10 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: build-files
-          path: /frontend/public/
+          path: /public/
 
   deploy:
+    needs: [install-and-test, build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
