@@ -22,7 +22,7 @@ jobs:
         run: |
           cd frontend
           npm install
-          npm validate
+          npm run-script validate
 
   build:
     runs-on: ubuntu-latest
