@@ -11,6 +11,9 @@ frontend/public/bundle.js
 frontend/build
 backend/target
 
+# Credentials
+infrastructure/.aws
+
 # misc
 .DS_Store
 .env.local
@@ -23,3 +26,7 @@ backend/target
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+### Terraform ###
+infrastructure/.terraform
+infrastructure/*.tfstate.backup
