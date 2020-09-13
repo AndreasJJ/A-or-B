@@ -438,6 +438,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "backend"
+version = "0.1.0"
+dependencies = [
+ "actix",
+ "actix-files",
+ "actix-rt",
+ "actix-service",
+ "actix-web",
+ "actix-web-actors",
+ "actix-web-httpauth",
+ "alcoholic_jwt",
+ "chrono",
+ "derive_more",
+ "diesel",
+ "dotenv",
+ "env_logger",
+ "futures",
+ "r2d2",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "url",
+ "uuid",
+ "validator",
+ "validator_derive",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.48"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2267,36 +2297,6 @@ checksum = "dda38f4e5ca63eda02c059d243aa25b5f35ab98451e518c51612cd0f1bd19a47"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "websocket_auth"
-version = "0.1.0"
-dependencies = [
- "actix",
- "actix-files",
- "actix-rt",
- "actix-service",
- "actix-web",
- "actix-web-actors",
- "actix-web-httpauth",
- "alcoholic_jwt",
- "chrono",
- "derive_more",
- "diesel",
- "dotenv",
- "env_logger",
- "futures",
- "r2d2",
- "regex",
- "reqwest",
- "serde",
- "serde_derive",
- "serde_json",
- "url",
- "uuid",
- "validator",
- "validator_derive",
 ]
 
 [[package]]

@@ -1,0 +1,44 @@
+FROM rust:1.43 as builder
+
+RUN USER=root cargo new --bin backend
+WORKDIR ./backend
+COPY ./backend/Cargo.toml ./Cargo.toml
+RUN cargo build --release
+RUN rm src/*.rs
+
+ADD ./backend/ ./
+
+RUN rm ./target/release/deps/backend*
+RUN cargo build --release
+
+
+FROM debian:buster-slim
+ARG APP=/usr/src/app
+
+RUN apt-get update \
+    && apt-get install -y ca-certificates tzdata wget gnupg2 lsb-release --no-install-recommends \
+    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install -y postgresql-client-12 --no-install-recommends \
+    && apt-get purge -y wget gnupg2 lsb-release \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+
+EXPOSE 8082
+
+ENV TZ=Etc/UTC \
+    APP_USER=appuser
+
+RUN groupadd $APP_USER \
+    && useradd -g $APP_USER $APP_USER \
+    && mkdir -p ${APP}
+
+COPY --from=builder /backend/target/release/backend ${APP}/backend
+
+RUN chown -R $APP_USER:$APP_USER ${APP}
+
+USER $APP_USER
+WORKDIR ${APP}
+
+CMD ["./backend"]
