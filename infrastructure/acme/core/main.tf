@@ -20,7 +20,7 @@ module "dns" {
 }
 
 module "acme-cert" {
-    source = "../modules/acme-cert-request"
+    source = "../modules/certificate-request"
     acme_server_url               = "${data.terraform_remote_state.letsencrypt_registration.server_url}" 
     acme_account_registration_url = "${data.terraform_remote_state.letsencrypt_registration.registration_url}"
     acme_account_key_pem          = "${data.terraform_remote_state.letsencrypt_registration.registration_private_key_pem}"  
