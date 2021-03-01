@@ -1,39 +1,32 @@
-FROM ekidd/rust-musl-builder:stable as builder
+FROM gradle:6.5.0-jdk8 as builder
 
-RUN USER=root cargo new --bin backend
-WORKDIR ./backend
-COPY ./backend/Cargo.lock ./Cargo.lock
-COPY ./backend/Cargo.toml ./Cargo.toml
-RUN cargo build --release
-RUN rm src/*.rs
+WORKDIR /tmp/backend
 
-ADD ./backend/ ./
+COPY build.gradle.kts .
+COPY gradle.properties .
+COPY settings.gradle.kts .
+COPY resources resources
+COPY src src
 
-RUN rm ./target/x86_64-unknown-linux-musl/release/deps/backend*
-RUN cargo build --release
+RUN gradle build
 
 
-FROM alpine:latest
+FROM openjdk:8-jre-alpine
 
-ARG APP=/usr/src/app
+WORKDIR /app
 
-EXPOSE 8082
+ENV APPLICATION_USER ktor
+ENV OKO_DB_MIGRATIONS_LOCATION filesystem:/app/resources/db/migrations
 
-ENV TZ=Etc/UTC \
-    APP_USER=appuser
+RUN adduser -D -g '' $APPLICATION_USER
 
-RUN addgroup -S $APP_USER \
-    && adduser -S -g $APP_USER $APP_USER
+COPY --from=builder /tmp/backend/build/libs/backend-all.jar /app/backend-all.jar
+COPY resources resources
 
-RUN apk update \
-    && apk add --no-cache ca-certificates tzdata \
-    && rm -rf /var/cache/apk/*
+RUN chown -R $APPLICATION_USER .
 
-COPY --from=builder /home/rust/src/backend/target/x86_64-unknown-linux-musl/release/backend ${APP}/backend
+USER $APPLICATION_USER
 
-RUN chown -R $APP_USER:$APP_USER ${APP}
+EXPOSE 8080
 
-USER $APP_USER
-WORKDIR ${APP}
-
-CMD ["./backend"]
+ENTRYPOINT ["java", "-server", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "backend-all.jar"]

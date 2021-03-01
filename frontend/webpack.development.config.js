@@ -19,7 +19,7 @@ const config = {
   mode: 'development',
   devServer: {
     host: '0.0.0.0',
-    port: '8081',
+    port: '8080',
     public: 'frontend',
     contentBase: path.join(__dirname, '/public'),
     index: 'index.html',

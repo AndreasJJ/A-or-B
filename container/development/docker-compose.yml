@@ -1,13 +1,14 @@
 version: '3.8'
 
 services:
+  #************** START FRONTEND **************
   frontend:
     container_name: 'frontend'
     build:
       context: ../../
       dockerfile: container/development/Dockerfile.frontend
     expose:
-      - 8081
+      - 8080
     volumes:
       - ../../frontend:/srv/frontend
     environment:
@@ -17,50 +18,44 @@ services:
       - keycloak
     networks:
       - proxy-network
+  #************** END FRONTEND **************
+  #************** START BACKEND **************
   backend:
-    container_name: 'backend'
     build:
       context: ../../
       dockerfile: container/development/Dockerfile.backend
-    expose:
-      - 8082
-    volumes:
-      - ../../backend:/srv/backend
+    restart: always
     depends_on:
       - database_backend
+    expose:
+      - 8080
+    volumes:
+      - ../../backend:/srv/backend
+    environment:
+      JDBC_URL: "jdbc:postgresql://database_backend:5432/backend"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_MIGRATIONS_LOCATION: filesystem:resources/db/migrations
     networks:
       - proxy-network
       - backend-network
   database_backend:
-    container_name: database_backend
-    image: 'postgres'
-    environment:
-      - POSTGRES_DB=backend
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    expose:
-      - 5433
+    image: postgres
+    restart: always
     volumes:
       - backend_data:/var/lib/postgresql/data
-    networks:
-      - backend-network
-  database_keycloak:
-    container_name: database_keycloak
-    image: 'postgres'
     environment:
-      - POSTGRES_DB=keycloak
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=backend
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - PGDATA=/var/lib/postgresql/data/pgdata
     expose:
       - 5432
-    volumes:
-      - keycloak_data:/var/lib/postgresql/data
     networks:
-      - auth-network
+      - backend-network
+  #************** END BACKEND **************
+  #************** START KEYCLOAK **************
   keycloak:
-    container_name: keycloak
     image: jboss/keycloak:10.0.2
     expose:
       - 8080
@@ -80,6 +75,36 @@ services:
     networks:
       - auth-network
       - proxy-network
+  database_keycloak:
+    image: 'postgres'
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    expose:
+      - 5432
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    networks:
+      - auth-network
+  #************** END KEYCLOAK **************
+  #************** START SWAGGER **************
+  swagger_ui:
+    image: swaggerapi/swagger-ui
+    expose:
+      - 8080
+    volumes:
+      - type: bind
+        source: ../../backend/openapi.yml
+        target: /usr/share/nginx/html/openapi.yml
+        read_only: true
+    environment:
+      API_URL: openapi.yml
+    networks:
+      - proxy-network
+  #************** END SWAGGER **************
+  #************** START NGINX **************
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -95,7 +120,7 @@ services:
     ports:
       - 80:80
       - 443:443
-
+  #************** END NGINX **************
 networks:
   auth-network:
     driver: bridge
@@ -103,7 +128,6 @@ networks:
     driver: bridge
   backend-network:
     driver: bridge
-
 volumes:
   keycloak_data:
   backend_data:

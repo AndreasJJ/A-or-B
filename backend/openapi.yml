@@ -1,0 +1,156 @@
+openapi: 3.0.1
+info:
+  title: backend
+  version: "0.1"
+servers:
+- url: /api/
+  description: Dev server
+paths:
+  /game/new:
+    post:
+      operationId: add
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          description: add 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+  /game/{id}:
+    get:
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: findById 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+  /game/list:
+    get:
+      operationId: findAll
+      parameters: []
+      responses:
+        "200":
+          description: findAll 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+  /ticket:
+    get:
+      operationId: index
+      parameters: []
+      responses:
+        "200":
+          description: index 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+components:
+  schemas:
+    Game:
+      required:
+      - createdTimestamp
+      - id
+      - leftText
+      - owner
+      - rightText
+      - rounds
+      - title
+      - updateTimestamp
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        owner:
+          type: string
+        createdTimestamp:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+        title:
+          type: string
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Round'
+        leftText:
+          type: string
+        rightText:
+          type: string
+    Round:
+      required:
+      - createdTimestamp
+      - id
+      - link
+      - title
+      - updateTimestamp
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/RoundId'
+        createdTimestamp:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+        title:
+          type: string
+        link:
+          type: string
+    RoundId:
+      required:
+      - gameId
+      type: object
+      properties:
+        gameId:
+          $ref: '#/components/schemas/Game'
+        roundId:
+          type: integer
+          format: int64
+          nullable: true
+    Ticket:
+      required:
+      - createdTimestamp
+      - id
+      - ip
+      - token
+      - updateTimestamp
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        token:
+          type: string
+        createdTimestamp:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+        ip:
+          type: string
+        used:
+          type: boolean

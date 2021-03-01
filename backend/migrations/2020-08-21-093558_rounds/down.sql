@@ -1,1 +1,0 @@
-ALTER TABLE rounds DROP COLUMN title;
