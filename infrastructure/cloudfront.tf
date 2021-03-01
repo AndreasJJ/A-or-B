@@ -47,7 +47,11 @@ resource "aws_cloudfront_distribution" "frontend_cloudfront_distribution" {
   }
   
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.ssl_cert.arn
+    acm_certificate_arn = module.acme-cert.arn
     ssl_support_method  = "sni-only"
   }
+}
+
+module "foo" {
+  source = "./acme/core"
 }

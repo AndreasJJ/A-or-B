@@ -6,9 +6,11 @@ It's a pretty simple game where you create a game with a title, and two buttons 
 You can then start a game session (which creates a code) with the games that you have created and are saved to your account, and other people can then join the game session with said code.
 
 Technology used:
-* Backend: Rust, Websocket
-* Frontend: React, Typescript, Websocket
+* Backend: Micronaut (Kotlin), REST and Websocket
+* Frontend: React, Typescript
 * Auth: Keycloak
+* Database: Postgres
+* API-Docs: Swagger-UI
 * Devops: Nginx, Docker, Terraform
 
 ## Environment Secrets

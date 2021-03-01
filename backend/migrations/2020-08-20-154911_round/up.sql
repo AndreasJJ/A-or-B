@@ -1,7 +1,0 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE TABLE rounds (
-	id SERIAL NOT NULL PRIMARY KEY,
-  game_id uuid NOT NULL,
-  link TEXT NOT NULL,
-  FOREIGN KEY (game_id) REFERENCES games(id)
-);

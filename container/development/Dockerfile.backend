@@ -1,11 +1,8 @@
-FROM rustlang/rust:nightly
+FROM gradle:6.8.3-jdk11
 
-RUN cargo install diesel_cli --no-default-features --features postgres
+COPY ./backend/wait-for-it.sh /srv/backend/
+WORKDIR /srv/backend/
 
-RUN cargo install cargo-watch
+EXPOSE 8080
 
-WORKDIR /srv/backend
-
-VOLUME ["/usr/local/cargo"]
-
-CMD cargo watch -x run
+CMD gradle run -t & ./wait-for-it.sh 0.0.0.0:8080 -t 0 -- gradle -t installDist --watch-fs
