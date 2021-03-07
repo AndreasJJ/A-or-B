@@ -1,23 +1,18 @@
 package com.andreasjj.websocket
 
-import com.andreasjj.websocket.extension.ExtendedWebSocketBroadcaster
-import com.andreasjj.websocket.extension.ExtendedWebSocketSession
-import com.andreasjj.websocket.extension.annotation.*
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.micronaut.scheduling.annotation.Scheduled
-import io.micronaut.validation.validator.Validator
+import io.micronaut.websocket.WebSocketBroadcaster
+import io.micronaut.websocket.WebSocketSession
+import io.micronaut.websocket.annotation.*
 import org.reactivestreams.Publisher
 import java.util.function.Predicate
-import javax.inject.Inject
 import javax.validation.Valid
 
 @ServerWebSocket("/ws/game/{gameId}/{username}")
-open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) {
-    @Inject
-    lateinit var validator: Validator
-
+open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) {
     @OnOpen
-    fun onOpen(gameId: String, username: String, session: ExtendedWebSocketSession?): Publisher<GameServerMessage>? {
+    fun onOpen(gameId: String, username: String, session: WebSocketSession?): Publisher<GameServerMessage>? {
         println(gameId)
         val newMessage = GameServerMessage(
             type = GameServerMessageType.WELCOME,
@@ -31,12 +26,8 @@ open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) 
         gameId: String,
         username: String,
         @Valid message: GameClientMessage,
-        session: ExtendedWebSocketSession?
+        session: WebSocketSession?
     ): Publisher<String>? {
-        println(message)
-        val violations = validator.validate(message)
-        println(violations.size)
-        println(violations)
         val msg = "[$username] $message"
         return broadcaster.broadcast(msg, isValid(gameId))
     }
@@ -55,7 +46,7 @@ open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) 
     fun onClose(
         gameId: String,
         username: String,
-        session: ExtendedWebSocketSession?
+        session: WebSocketSession?
     ): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
             type = GameServerMessageType.END,
@@ -68,7 +59,7 @@ open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) 
     fun onError(
         gameId: String,
         username: String,
-        session: ExtendedWebSocketSession?,
+        session: WebSocketSession?,
         error: MismatchedInputException?
     ): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
@@ -82,7 +73,7 @@ open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) 
     fun onError(
         gameId: String,
         username: String,
-        session: ExtendedWebSocketSession?,
+        session: WebSocketSession?,
         error: NullPointerException?
     ): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
@@ -92,8 +83,8 @@ open class GameWebsocket(private val broadcaster: ExtendedWebSocketBroadcaster) 
         return session?.send(newMessage)
     }
 
-    private fun isValid(gameId: String): Predicate<ExtendedWebSocketSession> {
-        return Predicate { s: ExtendedWebSocketSession ->
+    private fun isValid(gameId: String): Predicate<WebSocketSession> {
+        return Predicate { s: WebSocketSession ->
             gameId.equals(
                 s.uriVariables.get(
                     "gameId",
