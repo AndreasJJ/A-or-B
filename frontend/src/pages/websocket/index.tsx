@@ -49,7 +49,7 @@ const Websocket: React.FC = () => {
   };
 
   const getTicket = async () => {
-    const res = await fetch('/api/auth/ticket', {
+    const res = await fetch('/api/ticket', {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -90,7 +90,7 @@ const Websocket: React.FC = () => {
 
     disconnect();
 
-    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}#${window.location.host}/api/websocket?ticket=${ticket}`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1/andreas`;
 
     conn.current = new WebSocket(wsUri);
 
@@ -126,7 +126,11 @@ const Websocket: React.FC = () => {
     if (conn.current && inputRef.current) {
       const text = inputRef.current.value;
       log(`Sending: ${text}`);
-      conn.current.send(text);
+      const message = {
+        action: "Message",
+        text: "Hello"
+      }
+      conn.current.send(JSON.stringify(message));
       setInputFocus();
     }
     return false;

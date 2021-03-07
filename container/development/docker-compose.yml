@@ -3,7 +3,6 @@ version: '3.8'
 services:
   #************** START FRONTEND **************
   frontend:
-    container_name: 'frontend'
     build:
       context: ../../
       dockerfile: container/development/Dockerfile.frontend
@@ -107,7 +106,6 @@ services:
   #************** START NGINX **************
   nginx:
     image: nginx:latest
-    container_name: nginx
     build:
       context: ./
       dockerfile: Dockerfile.nginx

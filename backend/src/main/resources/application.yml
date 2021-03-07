@@ -16,8 +16,9 @@ micronaut:
               secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 datasources:
   default:
-    url: jdbc:postgresql://database_backend:5432/postgres
+    url: ${JDBC_URL}
     driverClassName: org.postgresql.Driver
-    username: postgres
-    password: 'postgres'
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     schema-generate: CREATE_DROP
+    dialect: POSTGRES
