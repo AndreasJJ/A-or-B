@@ -1,6 +1,7 @@
 package com.andreasjj.repository
 
 import com.andreasjj.Round
+import com.andreasjj.entity.RoundId
 
 import io.micronaut.context.annotation.Executable
 import io.micronaut.data.jdbc.annotation.JdbcRepository
@@ -10,7 +11,7 @@ import io.micronaut.data.repository.CrudRepository
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface RoundRepository : CrudRepository<Round, UUID> {
+interface RoundRepository : CrudRepository<Round, Long> {
     @Executable
-    fun find(id: UUID): Round
+    fun find(roundId: Long): Round
 }
