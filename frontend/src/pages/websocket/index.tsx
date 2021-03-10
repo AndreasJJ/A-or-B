@@ -90,7 +90,7 @@ const Websocket: React.FC = () => {
 
     disconnect();
 
-    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1/andreas`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1`;
 
     conn.current = new WebSocket(wsUri);
 
@@ -127,7 +127,7 @@ const Websocket: React.FC = () => {
       const text = inputRef.current.value;
       log(`Sending: ${text}`);
       const message = {
-        action: "Message",
+        action: "STARTGAME",
         text: "Hello"
       }
       conn.current.send(JSON.stringify(message));
