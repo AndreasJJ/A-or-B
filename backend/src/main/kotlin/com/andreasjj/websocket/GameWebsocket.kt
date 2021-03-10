@@ -7,6 +7,8 @@ import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.*
 import org.reactivestreams.Publisher
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 @ServerWebSocket("/ws/game/{gameId}")
@@ -30,6 +32,42 @@ open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSoc
 
     @OnAction(action = ClientAction.STARTGAME)
     fun startGame(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
+        val pingMessage = GameServerMessage(
+            action = ServerAction.PING,
+            text = "Start"
+        )
+        return session?.send(pingMessage)
+    }
+
+    @OnAction(action = ClientAction.JOINGAME)
+    fun joinGame(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
+        val pingMessage = GameServerMessage(
+            action = ServerAction.PING,
+            text = "Start"
+        )
+        return session?.send(pingMessage)
+    }
+
+    @OnAction(action = ClientAction.ANSWER)
+    fun answerRound(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
+        val pingMessage = GameServerMessage(
+            action = ServerAction.PING,
+            text = "Start"
+        )
+        return session?.send(pingMessage)
+    }
+
+    @OnAction(action = ClientAction.NEXTROUND)
+    fun nextRound(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
+        val pingMessage = GameServerMessage(
+            action = ServerAction.PING,
+            text = "Start"
+        )
+        return session?.send(pingMessage)
+    }
+
+    @OnAction(action = ClientAction.SKIPROUND)
+    fun skipRound(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
         val pingMessage = GameServerMessage(
             action = ServerAction.PING,
             text = "Start"

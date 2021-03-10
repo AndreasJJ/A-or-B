@@ -1,15 +1,20 @@
 package com.andreasjj.websocket.types
 
+import com.andreasjj.websocket.GameWebsocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.google.gson.Gson
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import org.reactivestreams.Publisher
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.function.Predicate
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.*
 
 open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: Class<U>) {
+    val LOG: Logger = LoggerFactory.getLogger(GameWebsocket::class.java)
+
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
             action = ServerAction.WELCOME,
@@ -96,12 +101,13 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
                             function.call(this, message, session) as Publisher<*>?
                         }
                     } else {
-                        println("Return type of a function annotated with OnAction should be Publisher<*>?")
+                        LOG.error("Return type of a function annotated with OnAction should be Publisher<*>?")
                     }
                 }
             }
         }
 
+        LOG.debug("Something went wrong in the routing or the client action was invalid")
         // If something went wrong, send a generic error message back
         val newMessage = GameServerMessage(
             action = ServerAction.ERROR,
