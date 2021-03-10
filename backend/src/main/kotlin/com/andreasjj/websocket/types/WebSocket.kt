@@ -3,6 +3,7 @@ package com.andreasjj.websocket.types
 import com.andreasjj.websocket.annotation.OnAction
 import com.beust.klaxon.Klaxon
 import com.beust.klaxon.KlaxonException
+import com.google.gson.Gson
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.websocket.WebSocketBroadcaster
@@ -17,12 +18,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.functions
 
-open class WebSocket<out U: Message>(/*private val broadcaster: WebSocketBroadcaster, */private val type: KClass<U>) {
-    companion object {
-        inline operator fun <reified T : Message> invoke(): WebSocket<T> = WebSocket(T::class)
-    }
-    /*@Inject
-    lateinit var applicationContext: ApplicationContext*/
+open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: KClass<U>) {
 
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
@@ -36,7 +32,7 @@ open class WebSocket<out U: Message>(/*private val broadcaster: WebSocketBroadca
         message: String,
         session: WebSocketSession?
     ): Publisher<Message>? {
-        val result = validateMessage<U>(message)
+        val result = validateMessage(message)
         val clientMessage: U = result.getOrElse {
             val newMessage = GameServerMessage(
                 action = ServerAction.ERROR,
@@ -75,10 +71,11 @@ open class WebSocket<out U: Message>(/*private val broadcaster: WebSocketBroadca
         return session?.send(newMessage)
     }
 
-    private inline fun <reified T> validateMessage(message: String): Result<T> {
+    private inline fun validateMessage(message: String): Result<U> {
         return try {
-            val messageObject = Klaxon().parse<T>(message)
-            messageObject?.let {
+            var gson = Gson()
+            val messageObject = gson.fromJson(message, type::class.java)
+            messageObject.objectInstance.let {
                 return Result.success(it)
             }
             Result.failure<T>(NullPointerException())
