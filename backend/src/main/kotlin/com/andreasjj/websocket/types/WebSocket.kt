@@ -1,8 +1,6 @@
 package com.andreasjj.websocket.types
 
 import com.andreasjj.websocket.annotation.OnAction
-import com.beust.klaxon.Klaxon
-import com.beust.klaxon.KlaxonException
 import com.google.gson.Gson
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
@@ -19,7 +17,6 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.functions
 
 open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: KClass<U>) {
-
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
         val newMessage = GameServerMessage(
             action = ServerAction.WELCOME,
@@ -71,18 +68,21 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
         return session?.send(newMessage)
     }
 
-    private inline fun validateMessage(message: String): Result<U> {
+    private fun validateMessage(message: String): Result<U> {
         return try {
-            var gson = Gson()
-            val messageObject = gson.fromJson(message, type::class.java)
-            messageObject.objectInstance.let {
+            val gson = Gson()
+            val messageObjectClass = gson.fromJson(message, type::class.java)
+            val messageObjectInstance = messageObjectClass.objectInstance
+            messageObjectInstance?.let {
                 return Result.success(it)
             }
-            Result.failure<T>(NullPointerException())
-        } catch(e: KlaxonException) {
-            Result.failure<T>(e)
-        } catch(e: IllegalArgumentException) {
-            Result.failure<T>(e)
+            Result.failure(NullPointerException())
+        } catch(e: Exception) {
+            println(e)
+            Result.failure<U>(e)
+        } catch(e: Exception) {
+            println(e)
+            Result.failure<U>(e)
         }
     }
 
