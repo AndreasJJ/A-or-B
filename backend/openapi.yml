@@ -6,6 +6,19 @@ servers:
 - url: /api/
   description: Dev server
 paths:
+  /game/list:
+    get:
+      operationId: findAll
+      parameters: []
+      responses:
+        "200":
+          description: findAll 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
   /game/new:
     post:
       operationId: add
@@ -39,19 +52,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
-  /game/list:
-    get:
-      operationId: findAll
-      parameters: []
-      responses:
-        "200":
-          description: findAll 200 response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Game'
   /ticket:
     get:
       operationId: index
@@ -77,59 +77,49 @@ components:
       - updateTimestamp
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        owner:
-          type: string
         createdTimestamp:
           type: string
           format: date-time
-        updateTimestamp:
+        id:
           type: string
-          format: date-time
-        title:
+          format: uuid
+        leftText:
+          type: string
+        owner:
+          type: string
+        rightText:
           type: string
         rounds:
           type: array
           items:
             $ref: '#/components/schemas/Round'
-        leftText:
+        title:
           type: string
-        rightText:
+        updateTimestamp:
           type: string
+          format: date-time
     Round:
       required:
       - createdTimestamp
-      - id
       - link
       - title
       - updateTimestamp
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/RoundId'
         createdTimestamp:
           type: string
           format: date-time
-        updateTimestamp:
-          type: string
-          format: date-time
-        title:
-          type: string
         link:
           type: string
-    RoundId:
-      required:
-      - gameId
-      type: object
-      properties:
-        gameId:
-          $ref: '#/components/schemas/Game'
         roundId:
           type: integer
           format: int64
           nullable: true
+        title:
+          type: string
+        updateTimestamp:
+          type: string
+          format: date-time
     Ticket:
       required:
       - createdTimestamp
@@ -139,18 +129,18 @@ components:
       - updateTimestamp
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        token:
-          type: string
         createdTimestamp:
           type: string
           format: date-time
+        id:
+          type: string
+          format: uuid
+        ip:
+          type: string
+        token:
+          type: string
         updateTimestamp:
           type: string
           format: date-time
-        ip:
-          type: string
         used:
           type: boolean

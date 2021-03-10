@@ -86,11 +86,11 @@ const Websocket: React.FC = () => {
   };
 
   const connect = async () => {
-    const ticket = await getTicket();
+    //const ticket = await getTicket();
 
     disconnect();
 
-    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1/andreas`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1`;
 
     conn.current = new WebSocket(wsUri);
 
@@ -127,9 +127,9 @@ const Websocket: React.FC = () => {
       const text = inputRef.current.value;
       log(`Sending: ${text}`);
       const message = {
-        action: "Message",
-        text: "Hello"
-      }
+        action: 'ENDGAME',
+        text: 'Hello',
+      };
       conn.current.send(JSON.stringify(message));
       setInputFocus();
     }

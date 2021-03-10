@@ -10,7 +10,7 @@ import io.micronaut.data.repository.CrudRepository
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-interface RoundRepository : CrudRepository<Round, UUID> {
+interface RoundRepository : CrudRepository<Round, Long> {
     @Executable
-    fun find(id: UUID): Round
+    fun find(roundId: Long): Round
 }

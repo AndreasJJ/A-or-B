@@ -19,8 +19,9 @@ import kotlinx.serialization.Serializable
 
 @Entity
 data class Round(
-    @EmbeddedId
-    var id: RoundId,
+    @Id
+    @GeneratedValue
+    var roundId: Long,
     @DateCreated
     @Column(name = "created_timestamp")
     var createdTimestamp: Instant,
