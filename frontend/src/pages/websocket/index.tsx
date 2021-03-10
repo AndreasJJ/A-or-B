@@ -86,7 +86,7 @@ const Websocket: React.FC = () => {
   };
 
   const connect = async () => {
-    const ticket = await getTicket();
+    //const ticket = await getTicket();
 
     disconnect();
 
@@ -127,9 +127,9 @@ const Websocket: React.FC = () => {
       const text = inputRef.current.value;
       log(`Sending: ${text}`);
       const message = {
-        action: "STARTGAME",
-        text: "Hello"
-      }
+        action: 'ENDGAME',
+        text: 'Hello',
+      };
       conn.current.send(JSON.stringify(message));
       setInputFocus();
     }

@@ -8,4 +8,5 @@ import io.micronaut.context.annotation.Executable
 @Executable
 annotation class OnAction(
     val action: ClientAction,
+    val args: Array<String> = []
 )
