@@ -1,10 +1,6 @@
 micronaut:
   application:
     name: backend
-  session:
-    http:
-      cookie: false
-      header: false
   security:
     enabled: false
     authentication: bearer
