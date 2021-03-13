@@ -1,8 +1,10 @@
 package com.andreasjj.websocket.types
 
+import com.andreasjj.repository.TicketRepository
 import com.andreasjj.websocket.GameWebsocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.google.gson.Gson
+import io.micronaut.http.server.util.HttpClientAddressResolver
 import io.micronaut.security.rules.SecurityRule
 import io.micronaut.security.utils.SecurityService
 import io.micronaut.websocket.WebSocketBroadcaster
@@ -10,6 +12,7 @@ import io.micronaut.websocket.WebSocketSession
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.*
 import java.util.function.Predicate
 import javax.inject.Inject
 import kotlin.reflect.KTypeProjection
@@ -19,9 +22,13 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
     @Inject
     lateinit var securityService: SecurityService
 
+    @Inject
+    lateinit var ticketRepository: TicketRepository
+
     val LOG: Logger = LoggerFactory.getLogger(GameWebsocket::class.java)
 
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
+        validateSession(session)
         val newMessage = GameServerMessage(
             action = ServerAction.WELCOME,
             text = "Welcome!"
@@ -34,6 +41,8 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
         session: WebSocketSession?,
         uriArgs: Map<String, String>
     ): Publisher<*>? {
+        println("message")
+        println(session?.attributes?.get("authenticated", Boolean::class.java))
         val result = validateMessage(message)
         val clientMessage: U = result.getOrElse {
             val newMessage = GameServerMessage(
@@ -140,6 +149,18 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
         } catch(e: Exception) {
             println(e.message)
             Result.failure(e)
+        }
+    }
+
+    private fun validateSession(session: WebSocketSession?) {
+        val ticketId = session?.requestParameters?.get("ticket")
+        ticketId?.let {
+            val uuid = UUID.fromString(it)
+            val ticket = ticketRepository.validateTicket(uuid)
+            ticket?.let {
+                session.attributes.put("sub", it.sub)
+                session.attributes.put("authenticated", true)
+            }
         }
     }
 

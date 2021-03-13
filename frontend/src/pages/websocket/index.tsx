@@ -67,10 +67,29 @@ const Websocket: React.FC = () => {
     }
   };
 
+  const getTicket = async () => {
+    const res = await fetch('/api/ticket', {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${keycloak.token}`,
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    });
+
+    const ticket = await res.json();
+    return ticket;
+  };
+
   const connect = async () => {
+    const ticket = await getTicket();
     disconnect();
 
-    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1?ticket=${ticket}`;
 
     conn.current = new WebSocket(wsUri);
 
