@@ -11,6 +11,12 @@ import io.micronaut.websocket.annotation.*
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import io.micronaut.security.utils.SecurityService
+
+import javax.inject.Inject
+
+
+
 
 @ServerWebSocket("/ws/game/{gameId}")
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -32,7 +38,7 @@ open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSoc
         return super.onClose(session)
     }*/
 
-    @OnAction(action = ClientAction.STARTGAME)
+    @OnAction(action = ClientAction.STARTGAME, auth = SecurityRule.IS_AUTHENTICATED)
     fun startGame(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
         val pingMessage = GameServerMessage(
             action = ServerAction.PING,
@@ -59,7 +65,7 @@ open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSoc
         return session?.send(pingMessage)
     }
 
-    @OnAction(action = ClientAction.NEXTROUND)
+    @OnAction(action = ClientAction.NEXTROUND, auth = SecurityRule.IS_AUTHENTICATED)
     fun nextRound(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
         val pingMessage = GameServerMessage(
             action = ServerAction.PING,
@@ -68,7 +74,7 @@ open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSoc
         return session?.send(pingMessage)
     }
 
-    @OnAction(action = ClientAction.SKIPROUND)
+    @OnAction(action = ClientAction.SKIPROUND, auth = SecurityRule.IS_AUTHENTICATED)
     fun skipRound(message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
         val pingMessage = GameServerMessage(
             action = ServerAction.PING,
@@ -77,7 +83,7 @@ open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSoc
         return session?.send(pingMessage)
     }
 
-    @OnAction(action = ClientAction.ENDGAME, ["gameId"])
+    @OnAction(action = ClientAction.ENDGAME, ["gameId"], auth = SecurityRule.IS_AUTHENTICATED)
     fun endGame(gameId: String, message: GameClientMessage, session: WebSocketSession?): Publisher<GameServerMessage>?  {
         val pingMessage = GameServerMessage(
             action = ServerAction.PING,

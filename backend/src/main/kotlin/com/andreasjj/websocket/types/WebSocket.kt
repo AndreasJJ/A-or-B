@@ -3,16 +3,22 @@ package com.andreasjj.websocket.types
 import com.andreasjj.websocket.GameWebsocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.google.gson.Gson
+import io.micronaut.security.rules.SecurityRule
+import io.micronaut.security.utils.SecurityService
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.function.Predicate
+import javax.inject.Inject
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.*
 
 open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: Class<U>) {
+    @Inject
+    lateinit var securityService: SecurityService
+
     val LOG: Logger = LoggerFactory.getLogger(GameWebsocket::class.java)
 
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
@@ -68,6 +74,16 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
                 if (annotation?.action != message.action) {
                     continue
                 }
+
+                // Check that the user has required authentication permissions
+                if (annotation.auth == SecurityRule.DENY_ALL || (annotation.auth == SecurityRule.IS_AUTHENTICATED && !securityService.isAuthenticated)) {
+                    val newMessage = GameServerMessage(
+                        action = ServerAction.ERROR,
+                        text = "Authentication Error"
+                    )
+                    return session?.send(newMessage)
+                }
+
                 // Get the uri arguments from the annotation
                 val annArgs = annotation.args
                 // The uri arguments to be added to the call

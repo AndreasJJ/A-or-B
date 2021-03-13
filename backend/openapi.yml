@@ -52,17 +52,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
-  /ticket:
-    get:
-      operationId: index
-      parameters: []
-      responses:
-        "200":
-          description: index 200 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Ticket'
 components:
   schemas:
     Game:
@@ -120,27 +109,3 @@ components:
         updateTimestamp:
           type: string
           format: date-time
-    Ticket:
-      required:
-      - createdTimestamp
-      - id
-      - ip
-      - token
-      - updateTimestamp
-      type: object
-      properties:
-        createdTimestamp:
-          type: string
-          format: date-time
-        id:
-          type: string
-          format: uuid
-        ip:
-          type: string
-        token:
-          type: string
-        updateTimestamp:
-          type: string
-          format: date-time
-        used:
-          type: boolean
