@@ -48,24 +48,6 @@ const Websocket: React.FC = () => {
     setLogHtml((prev) => (`${prev + msg}\n`));
   };
 
-  const getTicket = async () => {
-    const res = await fetch('/api/ticket', {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${keycloak.token}`,
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-    });
-
-    const ticket = await res.json();
-    return ticket;
-  };
-
   const updateUi = () => {
     if (conn.current == null) {
       setStatus('Disconnected');
@@ -86,8 +68,6 @@ const Websocket: React.FC = () => {
   };
 
   const connect = async () => {
-    //const ticket = await getTicket();
-
     disconnect();
 
     const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1`;
