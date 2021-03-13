@@ -3,6 +3,8 @@ package com.andreasjj.websocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.andreasjj.websocket.types.*
 import io.micronaut.scheduling.annotation.Scheduled
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.*
@@ -10,8 +12,8 @@ import org.reactivestreams.Publisher
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-
 @ServerWebSocket("/ws/game/{gameId}")
+@Secured(SecurityRule.IS_ANONYMOUS)
 open class GameWebsocket(private val broadcaster: WebSocketBroadcaster) : WebSocket<GameClientMessage>(broadcaster, GameClientMessage::class.java) {
     @OnOpen
     fun onOpen(gameId: String, session: WebSocketSession?): Publisher<*>? {

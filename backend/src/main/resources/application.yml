@@ -2,7 +2,7 @@ micronaut:
   application:
     name: backend
   security:
-    enabled: false
+    enabled: true
     authentication: bearer
     token:
       jwt:
