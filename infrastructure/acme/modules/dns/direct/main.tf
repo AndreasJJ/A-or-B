@@ -8,14 +8,14 @@
 # to use in the creation of the additional sub domain records.
 
 data "aws_route53_zone" "main" {
-  name         = "${var.dns_domain_name}"
+  name         = var.dns_domain_name
   private_zone = false
 }
 
 resource "aws_route53_record" "letsencrypt-terraform" {
-   zone_id = "${data.aws_route53_zone.main.zone_id}"
+   zone_id = data.aws_route53_zone.main.zone_id
    name    = "${var.dns_domain_subdomain}.${data.aws_route53_zone.main.name}"
    type    = "CNAME"
    ttl     = "60"
-   records = ["${var.dns_cname_value}"]
+   records = [var.dns_cname_value]
 }

@@ -1,0 +1,14 @@
+{
+  "registry.terraform.io/hashicorp/local": {
+    "hash": "h1:KfieWtVyGWwplSoLIB5usKAUnrIkDQBkWaR5TI+4WYg=",
+    "version": "2.1.0"
+  },
+  "registry.terraform.io/hashicorp/tls": {
+    "hash": "h1:XTU9f6sGMZHOT8r/+LWCz2BZOPH127FBTPjMMEAAu1U=",
+    "version": "3.1.0"
+  },
+  "registry.terraform.io/vancluever/acme": {
+    "hash": "h1:LRbuxIBKJj41u2dFe+r/ujY9VN7N3jXFHyH+2WkQYxM=",
+    "version": "2.3.0"
+  }
+}

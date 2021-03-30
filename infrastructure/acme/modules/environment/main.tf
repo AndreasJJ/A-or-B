@@ -30,7 +30,7 @@ resource "aws_route" "internet_access" {
 
 # Create a subnet for our instances 
 resource "aws_subnet" "public" {
-  vpc_id                  = "${aws_vpc.appvpc.id}"
+  vpc_id                  = aws_vpc.appvpc.id
   cidr_block              = "10.20.100.32/27"
   map_public_ip_on_launch = true
 
@@ -48,7 +48,7 @@ resource "aws_subnet" "public" {
 resource "aws_security_group" "elb" {
   name        = "app-sg-elb"
   description = "ELB security group"
-  vpc_id      = "${aws_vpc.appvpc.id}"
+  vpc_id      = aws_vpc.appvpc.id
 
   # HTTPS access from anywhere
   ingress {
@@ -74,9 +74,9 @@ resource "aws_security_group" "elb" {
 
 resource "aws_iam_server_certificate" "elb_cert" {
   name_prefix       = "app-cert-"
-  certificate_body  = "${var.env_cert_body}"
-  certificate_chain = "${var.env_cert_chain}"
-  private_key       = "${var.env_cert_privkey}"
+  certificate_body  = var.env_cert_body
+  certificate_chain = var.env_cert_chain
+  private_key       = var.env_cert_privkey
 
   lifecycle {
     create_before_destroy = true
@@ -86,16 +86,16 @@ resource "aws_iam_server_certificate" "elb_cert" {
 resource "aws_elb" "web" {
   name = "app-elb-www"
   
-  subnets         = ["${aws_subnet.public.id}"]
-  security_groups = ["${aws_security_group.elb.id}"]
-  instances       = ["${aws_instance.nginx.*.id}"]
+  subnets         = [aws_subnet.public.id]
+  security_groups = [aws_security_group.elb.id]
+  instances       = [aws_instance.nginx.*.id]
 
   listener {
     instance_port      = 80
     instance_protocol  = "http"
     lb_port            = 443
     lb_protocol        = "https"
-    ssl_certificate_id = "${aws_iam_server_certificate.elb_cert.arn}"
+    ssl_certificate_id = aws_iam_server_certificate.elb_cert.arn
 
   }
 
@@ -114,7 +114,7 @@ resource "aws_elb" "web" {
 resource "aws_security_group" "nginx-sg" {
   name        = "app-nginx-sg"
   description = "Security group for nginx"
-  vpc_id      = "${aws_vpc.appvpc.id}"
+  vpc_id      = aws_vpc.appvpc.id
 
   # SSH access from anywhere
   ingress {
@@ -156,7 +156,7 @@ resource "tls_private_key" "nginx-provisioner" {
 
 resource "aws_key_pair" "nginx-provisioning" {
   key_name   = "app-provisioning-key"
-  public_key = "${tls_private_key.nginx-provisioner.public_key_openssh}"
+  public_key = tls_private_key.nginx-provisioner.public_key_openssh
 }
 
 data "aws_ami" "ubuntu" {
@@ -174,22 +174,22 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "nginx" {
 
-  count = "${var.env_nginx_count}"
+  count = var.env_nginx_count
   connection {
     # The default username for our AMI, and use our on the fly created 
     # private key to do the initial bootstrapping (install of nginx)
     user        = "ubuntu"
-    private_key = "${tls_private_key.nginx-provisioner.private_key_pem}"
+    private_key = tls_private_key.nginx-provisioner.private_key_pem
   }
 
   instance_type = "t2.micro"
-  ami           = "${data.aws_ami.ubuntu.id}"
-  key_name      = "${aws_key_pair.nginx-provisioning.id}"
-  vpc_security_group_ids = ["${aws_security_group.nginx-sg.id}"]
+  ami           = data.aws_ami.ubuntu.id
+  key_name      = aws_key_pair.nginx-provisioning.id
+  vpc_security_group_ids = [aws_security_group.nginx-sg.id]
   # We're going to launch into the same single (public) subnet as our ELB. 
   # In a production environment it's more common to have a separate 
   # private subnet for backend instances.
-  subnet_id     = "${aws_subnet.public.id}"
+  subnet_id     = aws_subnet.public.id
 
   # We run a remote provisioner on the instance after creating it.
   # In this case, we just install nginx and start it. By default,
