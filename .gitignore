@@ -29,8 +29,11 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 
 ### Terraform ###
-infrastructure/.terraform
-infrastructure/*.tfstate.backup
+.terraform
+*.tfstate.backup
+.terraform
+.aws
+.scw
 
 # New backend
 Thumbs.db
