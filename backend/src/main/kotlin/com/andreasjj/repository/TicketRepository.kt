@@ -13,21 +13,5 @@ import javax.transaction.Transactional
 @JdbcRepository(dialect = Dialect.POSTGRES)
 interface TicketRepository : CrudRepository<Ticket, UUID> {
     @Executable
-    fun find(id: UUID): Ticket
-
-    @Executable
     fun findByIdForUpdate(id: UUID): Ticket?
-
-    @Transactional
-    fun validateTicket(id: UUID): Ticket? {
-        val ticket = findByIdForUpdate(id)
-        ticket?.let {
-            if (!it.used) {
-                it.used = true
-                update(it)
-                return it
-            }
-        }
-        return null
-    }
 }

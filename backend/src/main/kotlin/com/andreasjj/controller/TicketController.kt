@@ -1,5 +1,6 @@
 package com.andreasjj
 
+import com.andreasjj.manager.TicketManager
 import com.andreasjj.repository.TicketRepository
 
 import javax.inject.Inject
@@ -20,7 +21,7 @@ import java.time.Instant
 @Controller("/ticket")
 class TicketController {
     @Inject
-    lateinit var ticketRepository: TicketRepository
+    lateinit var ticketManager: TicketManager
 
     @Get("/")
     fun index(request: HttpRequest<*>, authentication: Authentication): HttpResponse<Ticket> {
@@ -29,7 +30,7 @@ class TicketController {
         println(sub)
         sub?.let {
             val newTicket = Ticket(sub = sub, updateTimestamp = Instant.now(), createdTimestamp = Instant.now())
-            val createdTicket = ticketRepository.save(newTicket);
+            val createdTicket = ticketManager.save(newTicket);
             return HttpResponse.ok(createdTicket)
         }
         return HttpResponse.badRequest()
