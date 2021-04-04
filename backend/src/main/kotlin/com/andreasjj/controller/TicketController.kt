@@ -25,9 +25,8 @@ class TicketController {
 
     @Get("/")
     fun index(request: HttpRequest<*>, authentication: Authentication): HttpResponse<Ticket> {
-        println(authentication.attributes)
+        // attributes also contains preferred_username, given_name, name, family_name, email, etc.
         val sub = authentication.attributes["sub"] as? String
-        println(sub)
         sub?.let {
             val newTicket = Ticket(sub = sub, updateTimestamp = Instant.now(), createdTimestamp = Instant.now())
             val createdTicket = ticketManager.save(newTicket);

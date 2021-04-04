@@ -1,12 +1,10 @@
 package com.andreasjj.websocket.types
 
-import com.andreasjj.repository.TicketRepository
+import com.andreasjj.manager.TicketManager
 import com.andreasjj.websocket.GameWebsocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.google.gson.Gson
-import io.micronaut.http.server.util.HttpClientAddressResolver
 import io.micronaut.security.rules.SecurityRule
-import io.micronaut.security.utils.SecurityService
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import org.reactivestreams.Publisher
@@ -20,10 +18,7 @@ import kotlin.reflect.full.*
 
 open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: Class<U>) {
     @Inject
-    lateinit var securityService: SecurityService
-
-    @Inject
-    lateinit var ticketRepository: TicketRepository
+    lateinit var ticketManager: TicketManager
 
     val LOG: Logger = LoggerFactory.getLogger(GameWebsocket::class.java)
 
@@ -41,8 +36,6 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
         session: WebSocketSession?,
         uriArgs: Map<String, String>
     ): Publisher<*>? {
-        println("message")
-        println(session?.attributes?.get("authenticated", Boolean::class.java))
         val result = validateMessage(message)
         val clientMessage: U = result.getOrElse {
             val newMessage = GameServerMessage(
@@ -85,12 +78,13 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
                 }
 
                 // Check that the user has required authentication permissions
-                if (annotation.auth == SecurityRule.DENY_ALL || (annotation.auth == SecurityRule.IS_AUTHENTICATED && !securityService.isAuthenticated)) {
+                val authenticated: Boolean = session?.attributes?.getValue("authenticated") as Boolean
+                if (annotation.auth == SecurityRule.DENY_ALL || (annotation.auth == SecurityRule.IS_AUTHENTICATED && !authenticated)) {
                     val newMessage = GameServerMessage(
                         action = ServerAction.ERROR,
                         text = "Authentication Error"
                     )
-                    return session?.send(newMessage)
+                    return session.send(newMessage)
                 }
 
                 // Get the uri arguments from the annotation
@@ -147,7 +141,7 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
             val messageObject = gson.fromJson(message, type)
             return Result.success(messageObject)
         } catch(e: Exception) {
-            println(e.message)
+            LOG.debug(e.message)
             Result.failure(e)
         }
     }
@@ -156,10 +150,12 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
         val ticketId = session?.requestParameters?.get("ticket")
         ticketId?.let {
             val uuid = UUID.fromString(it)
-            val ticket = ticketRepository.validateTicket(uuid)
-            ticket?.let {
-                session.attributes.put("sub", it.sub)
+            val ticket = ticketManager.validateTicket(uuid)
+            ticket?.run {
+                session.attributes.put("sub", sub)
                 session.attributes.put("authenticated", true)
+            } ?: {
+                session.attributes.put("authenticated", false)
             }
         }
     }

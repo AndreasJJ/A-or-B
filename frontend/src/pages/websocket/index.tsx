@@ -89,7 +89,7 @@ const Websocket: React.FC = () => {
     const ticket = await getTicket();
     disconnect();
 
-    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1?ticket=${ticket}`;
+    const wsUri = `${((window.location.protocol === 'https:' && 'wss://') || 'ws://')}${window.location.host}/api/ws/game/1?ticket=${ticket.id}`;
 
     conn.current = new WebSocket(wsUri);
 
