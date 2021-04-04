@@ -8,10 +8,13 @@ import javax.inject.Inject
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
 import io.micronaut.http.annotation.Controller
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import java.time.Instant
 import java.util.*
 
 @Controller("/game")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 class GameController {
     @Inject
     lateinit var gameRepository: GameRepository

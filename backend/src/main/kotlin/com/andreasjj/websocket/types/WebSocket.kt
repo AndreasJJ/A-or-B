@@ -1,16 +1,29 @@
 package com.andreasjj.websocket.types
 
+import com.andreasjj.manager.TicketManager
+import com.andreasjj.websocket.GameWebsocket
 import com.andreasjj.websocket.annotation.OnAction
 import com.google.gson.Gson
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.websocket.WebSocketBroadcaster
 import io.micronaut.websocket.WebSocketSession
 import org.reactivestreams.Publisher
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.util.*
 import java.util.function.Predicate
+import javax.inject.Inject
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.*
 
 open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcaster, private val type: Class<U>) {
+    @Inject
+    lateinit var ticketManager: TicketManager
+
+    val LOG: Logger = LoggerFactory.getLogger(GameWebsocket::class.java)
+
     open fun onOpen(session: WebSocketSession?): Publisher<GameServerMessage>? {
+        validateSession(session)
         val newMessage = GameServerMessage(
             action = ServerAction.WELCOME,
             text = "Welcome!"
@@ -63,6 +76,17 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
                 if (annotation?.action != message.action) {
                     continue
                 }
+
+                // Check that the user has required authentication permissions
+                val authenticated: Boolean = session?.attributes?.getValue("authenticated") as Boolean
+                if (annotation.auth == SecurityRule.DENY_ALL || (annotation.auth == SecurityRule.IS_AUTHENTICATED && !authenticated)) {
+                    val newMessage = GameServerMessage(
+                        action = ServerAction.ERROR,
+                        text = "Authentication Error"
+                    )
+                    return session.send(newMessage)
+                }
+
                 // Get the uri arguments from the annotation
                 val annArgs = annotation.args
                 // The uri arguments to be added to the call
@@ -96,12 +120,13 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
                             function.call(this, message, session) as Publisher<*>?
                         }
                     } else {
-                        println("Return type of a function annotated with OnAction should be Publisher<*>?")
+                        LOG.error("Return type of a function annotated with OnAction should be Publisher<*>?")
                     }
                 }
             }
         }
 
+        LOG.debug("Something went wrong in the routing or the client action was invalid")
         // If something went wrong, send a generic error message back
         val newMessage = GameServerMessage(
             action = ServerAction.ERROR,
@@ -116,8 +141,22 @@ open class WebSocket<out U: Message>(private val broadcaster: WebSocketBroadcast
             val messageObject = gson.fromJson(message, type)
             return Result.success(messageObject)
         } catch(e: Exception) {
-            println(e.message)
+            LOG.debug(e.message)
             Result.failure(e)
+        }
+    }
+
+    private fun validateSession(session: WebSocketSession?) {
+        val ticketId = session?.requestParameters?.get("ticket")
+        ticketId?.let {
+            val uuid = UUID.fromString(it)
+            val ticket = ticketManager.validateTicket(uuid)
+            ticket?.run {
+                session.attributes.put("sub", sub)
+                session.attributes.put("authenticated", true)
+            } ?: {
+                session.attributes.put("authenticated", false)
+            }
         }
     }
 

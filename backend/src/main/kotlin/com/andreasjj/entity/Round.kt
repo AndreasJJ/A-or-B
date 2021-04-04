@@ -14,9 +14,6 @@ import io.micronaut.data.annotation.DateCreated
 import io.micronaut.data.annotation.DateUpdated
 import io.micronaut.data.annotation.EmbeddedId
 
-import com.andreasjj.utilities.UUIDSerializer
-import kotlinx.serialization.Serializable
-
 @Entity
 data class Round(
     @Id

@@ -124,8 +124,7 @@ components:
       required:
       - createdTimestamp
       - id
-      - ip
-      - token
+      - sub
       - updateTimestamp
       type: object
       properties:
@@ -135,9 +134,7 @@ components:
         id:
           type: string
           format: uuid
-        ip:
-          type: string
-        token:
+        sub:
           type: string
         updateTimestamp:
           type: string

@@ -39,8 +39,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut:micronaut-runtime")
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut:micronaut-session")
     implementation("io.swagger.core.v3:swagger-annotations")
 
     compileOnly("jakarta.persistence:jakarta.persistence-api:2.2.2")

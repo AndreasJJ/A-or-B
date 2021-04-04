@@ -6,11 +6,12 @@ import io.micronaut.context.annotation.Executable
 import io.micronaut.data.jdbc.annotation.JdbcRepository
 import io.micronaut.data.model.query.builder.sql.Dialect
 import io.micronaut.data.repository.CrudRepository
+import java.util.*
 
-import java.util.UUID
+import javax.transaction.Transactional
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 interface TicketRepository : CrudRepository<Ticket, UUID> {
     @Executable
-    fun find(id: UUID): Ticket
+    fun findByIdForUpdate(id: UUID): Ticket?
 }
